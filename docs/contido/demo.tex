@@ -1,0 +1,63 @@
+\chapter{Desarrollo}
+\label{cap:desarrollo}
+
+TFG BREVE: Es conveniente comenzar el capítulo un un par de párrafos que explique su contenido. Por ejemplo: "En este capítulo se presenta en desarrollo del proyecto realizado. Comenzaremos explicando las tecnologías utilizadas para, posteriormente, detallar ...."
+
+\section{Tecnologías}
+En el TFG se suele poner un capítulo completo dedicado a las tecnologías empleadas, pero en el TFG BREVE se hará en esta sección. Se pretende resumir las tecnologías y explicar por qué se han elegido. Hay que evitar hacer copy-paste de web. Además, es importante poner referencias bibliográficas utilizando este formato: \cite{ErlangBook,ErlangWebBook}. 
+
+\section{Desarrollo}
+En el TFG suele haber varios capítulos para explicar el desarrollo realizados. Aquí lo haremos en un solo capítulo.
+
+En el caso de proyectos con microcontroladores, se debe indicar claramente el montaje. 
+
+En caso de incluir figuras, deben referenciarse de esta forma "la figura~\ref{fig:exemplo} ". Todas las figuras deben estar referenciadas en el texto.
+Se recomienda poner todas las figuras en el directorio \texttt{imaxes}.
+
+\begin{figure}[hp!]
+  \centering
+  \includegraphics[width=0.75\textwidth]{imaxes/udc.png}
+  \caption{Título de la figura}
+  \label{fig:exemplo}
+\end{figure}
+
+\begin{figure}[hp!]
+  \centering
+  \begin{subfigure}[c]{0.3\textwidth}
+    \includegraphics[angle=45,width=\textwidth]{imaxes/udc.png}
+    \caption{Título figura 1}
+    \label{fig:subfigura-rotada}
+  \end{subfigure}
+  \hspace{0.1\textwidth}
+  \begin{subfigure}[c]{0.3\textwidth}
+    \includegraphics[width=\textwidth,height=3cm]{imaxes/udc.png}
+    \caption{Título figura 2}
+    \label{fig:subfigura-deformada}
+  \end{subfigure}
+  \caption{Título general de la figura}
+  \label{fig:exemplo-subfiguras}
+\end{figure}
+
+Se puede añadir partes del código que sean importantes para entender el desarrollo.
+
+Se pueden incluir cuadros (tablas). Los cuadros tienen que estar referenciados en el texto (por ejemplo, el cuadro \ref{tab:exemplo}).
+
+\begin{table}[hp!]
+  \centering
+  \rowcolors{2}{white}{udcgray!25}
+  \begin{tabular}{c|c}
+  \rowcolor{udcpink!25}
+  \textbf{Título de columna} & \textbf{Outro título de columna} \\\hline
+  \textit{Título de fila} & Contido de celda \\
+  \textit{Título de fila} & Contido de celda \\
+  \textit{Título de fila} & Contido de celda \\
+  \textit{Título de fila} & Contido de celda \\
+  \textit{Título de fila} & Contido de celda \\
+  \textit{Título de fila} & Contido de celda \\
+  \end{tabular}
+  \caption{Título del cuadro}
+  \label{tab:exemplo}
+\end{table}
+
+
+

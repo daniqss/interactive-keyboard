@@ -1,0 +1,103 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Preámbulo                                                                    %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[11pt,a4paper,titlepage,oneside]{report}
+
+% Spanish-specific commands
+\usepackage[galician]{babel}
+%\usepackage[spanish]{babel}
+
+
+ \def\today{date}
+%%% RELACIÓN DE VARIABLES A PERSONALIZAR %%%
+\def\nome{Nome Completo}                             % substitúe aquí o teu nome
+\def\nomedirectorA{Outro Nome Completo}              % substitúe aquí o nome de quen dirixe
+\def\titulo{Título completo do traballo fin de grao} % substitúe aquí o título do teu TFG
+\def\nometitulacion{GRAO EN ENXEÑARÍA INFORMÁTICA}
+\def\nomemencion{ENXEÑARÍA DE COMPUTADORES}  %TFG BREVE: ponerlo en español o en gallego dependiendo del idioma en el que se escriba la memoria
+\def\tituloagradecementos{Agradecementos}  %TFG BREVE: cambiar a español si es necesario
+\def\palabraschaveprincipal{Palabras chave}  %TFG BREVE: cambiar a español si es necesario
+\def\palabraschavesecundaria{Keywords} 
+%\def\nomeglosarioacronimos{Relación de Acrónimos}
+%\def\nomeglosariotermos{Glosario}
+%\def\bibconfig{bibliografia/bibliografia}
+
+
+\usepackage{estilo_tfg}
+
+% Lista de paquetes potencialmente interesantes (uso baixo demanda)
+
+% \usepackage{alltt}       % proporciona o entorno alltt, semellante a verbatim pero que respecta comandos
+% \usepackage{enumitem}    % permite personalizar os entornos de lista
+% \usepackage{eurofont}    % proporciona o comando \euro
+% \usepackage{float}       % permite máis opcións para controlar obxectos flotantes (táboas, figuras)
+% \usepackage{hhline}      % permite personalizar as liñas horizontais en arrays e táboas
+\usepackage{longtable}   % permite construir táboas que ocupan máis dunha páxina
+% \usepackage{lscape}      % permite colocar partes do documento en orientación apaisada
+% \usepackage{moreverb}    % permite personalizar o entorno verbatim
+% \usepackage{multirow}    % permite crear celdas que ocupan varias filas da mesma táboa
+% \usepackage{pdfpages}    % permite insertar ficheiros en PDF no documento
+% \usepackage{rotating}    % permite diferentes tipos de rotacións para figuras e táboas
+% \usepackage{subcaption}  % permite a inclusión de varias subfiguras nunha figura
+% \usepackage{tabu}        % permite táboas flexibles
+% \usepackage{tabularx}    % permite táboas con columnas de anchura determinada
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Corpo                                                                        %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ % Preliminares do documento            %
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+ \include{portada/portada}
+ \dedicatoria{TFG BREVE (opcional): escribe la dedicatoria} %
+ \paxinaenbranco
+ \begin{agradecementos}
+{TFG BREVE (opcional): escribe los agradecimientos}        
+ \end{agradecementos}
+ \include{portada/resumo}
+
+ \pagenumbering{roman}
+ \setcounter{page}{1}
+ \bstctlcite{IEEEexample:BSTcontrol}
+
+ \tableofcontents
+ \listoffigures
+ \listoftables
+ \clearpage
+ 
+ \pagenumbering{arabic}
+ \setcounter{page}{1}
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ % Capítulos                            %
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+ \include{contido/introducion} %TFG BREVE: acceder a ese fichero para escribir la introducción
+ \include{contido/demo}        %TFG BREVE: acceder a ese fichero para escribir la descripción del proyecto
+ \include{contido/conclusions} %TFG BREVE: acceder a ese fichero para escribir conclusiones y líneas futuras
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ % Apéndices, glosarios e bibliografía  %
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+ %\appendix
+%\appendixpage
+ %\include{anexos/adicional} %TFG BREVE: No es neceario
+%\include{anexos/...}
+
+% \printglossary[type=\acronymtype,title=\nomeglosarioacronimos]
+ %\printglossary[title=\nomeglosariotermos]
+
+ \bibliographystyle{IEEEtranN}
+ \bibliography{bibliografia/bibliografia} %TFG: La bibliografía que escribe en el fichero bibliogrfia/bibliografia.bib Para verlo, es necesario indicar que queremos ver todos los ficheros ya que por defecto muestra solamentes los .tex
+ \clearpage
+ 
+\end{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

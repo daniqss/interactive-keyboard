@@ -1,0 +1,24 @@
+        This is at least a partial credits-file of people that have
+        contributed to this project.  It is sorted by name and
+        formatted to allow easy grepping and beautification by
+        scripts.  The fields are: name (N), email (E), and
+        description (D).
+        Thanks,
+
+                        Laura
+----------
+
+N: Daniel Valcarce Silva
+E: daniel.valcarce@udc.es
+D: Predoctoral researcher
+
+N: Javier Parapar López
+E: javier.parapar@udc.es
+D: Lecturer
+
+N: Javier París Fernández
+E: javier.paris@udc.es
+D: Lecturer
+
+N: Víctor Manuel Gulías Fernández
+D: Mentor

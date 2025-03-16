@@ -1,0 +1,151 @@
+\ProvidesPackage{estilo_tfg}
+\typeout{=============== Estilo LaTeX para TFGs GEI FIC ===============}
+
+%%                                   %%
+%% Paquetes a incluir por defecto    %%
+%%                                   %%
+
+\RequirePackage[table]{xcolor}
+\RequirePackage{graphicx}
+\RequirePackage{lettrine}
+\RequirePackage{appendix}
+%\RequirePackage{polyglossia}
+\RequirePackage{ifthen}
+
+
+\usepackage{latexsym}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\usepackage[hmargin={4cm,2.5cm},tmargin=4cm,bmargin=4cm]{geometry}
+
+\usepackage{libertine}
+
+\usepackage[galician,calc]{datetime2}
+\usepackage{fancyhdr}
+\usepackage{IEEEtrantools}
+\usepackage{listings}
+\usepackage{multicol}
+\usepackage[numbers,sort]{natbib}
+\usepackage{setspace}
+\usepackage{subcaption}
+\usepackage[nottoc,notlot,notlof,notindex]{tocbibind}
+\usepackage{titlesec}
+\usepackage{url}
+
+\usepackage{blindtext}
+\usepackage{silence}
+\WarningsOff[blindtext] % suppress warnings related to package blindtext (galician not defined)
+\usepackage[pdfencoding=auto,colorlinks]{hyperref}
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% % definición de comandos               %
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\definecolor{udcpink}{RGB}{177,0,114}
+\definecolor{udcgray}{RGB}{100,100,100}
+\definecolor{ficblue}{RGB}{50,110,118}
+
+\newcommand{\paxinaenbranco}{\mbox{}\thispagestyle{empty}\clearpage}
+\newcommand{\dedicatoria}[1]{\thispagestyle{empty}\mbox{}\vfill\hfill\emph{#1}\vfill}
+\newenvironment{agradecementos}
+               {\thispagestyle{empty}
+                 \vspace*{175pt}
+                 \subsubsection*{\centering \tituloagradecementos}}
+               {\paxinaenbranco}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% opcións titlesec                     %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\bigrule}{{\color{udcpink}\titlerule[0.5mm]}}
+\titleformat{\chapter}[display]%
+{\bfseries\Huge}%
+{\filleft\Large\chaptertitlename \Large{} \thechapter}%
+{0mm}{\filleft}[\vspace{0.5cm} \bigrule]
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% opcións fancyhdr                     %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pagestyle{fancy}
+\fancyhead{}
+\fancyhead[LO]{{\small\leftmark}}
+\fancyhead[R]{{\small\nouppercase{\textsl{\rightmark}}}}
+\fancyfoot{}
+\fancyfoot[C,CO]{\thepage}
+\setlength{\headheight}{14pt}
+
+\fancypagestyle{sobrante}{\fancyfoot[CE,CO]{\color{red} \hrulefill PÁXINA EXTRA \hrulefill \thepage{} \hrulefill PÁXINA EXTRA \hrulefill}}
+
+\AddToHook{shipout/background}{\put(1in,-1in){%
+%\AddEverypageHook{%
+  \ifthenelse{\(\value{page}>79\) \AND \(\NOT \equal{\@chapapp}{\appendixname}\)}
+             {\message{Estilo TFG warning: sobrepasado o límite de 80 páxinas antes dos apéndices!}\thispagestyle{sobrante}}
+}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% opcións setspace                     %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\onehalfspacing
+
+\setlength{\arrayrulewidth}{0.5mm}
+\setlength{\tabcolsep}{18pt}
+\renewcommand{\arraystretch}{1.5}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% opcións hyperref                     %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\hypersetup{
+ linkcolor=ficblue,
+ filecolor=ficblue,      
+ urlcolor=ficblue,
+ citecolor=ficblue,
+ pdfauthor={\nome},
+ pdftitle={\titulo}
+}
+\usepackage{footnotebackref}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% opcións datetime2                    %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\DTMsavenow{lastcompilationdate}
+\def\datasimple{\DTMmonthname{\DTMfetchmonth{lastcompilationdate}} de \DTMfetchyear{lastcompilationdate}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% opcións listings                     %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\lstset{
+  basicstyle=\ttfamily\footnotesize, % estilo da fonte para entornos de código
+  breakatwhitespace=true,            % pártense as liñas só polos espazos en branco
+  breaklines=true,                   % pártense as liñas automaticamente
+  captionpos=b,                      % a lenda vai debaixo
+  commentstyle=\color{udcgray},      % os comentarios van en gris
+  frame=single,	                     % o código leva un cadro arredor
+  keepspaces=true,                   % respéctanse os espazos no código LaTeX
+  keywordstyle=\color{ficblue},      % as palabras chave da linguaxe van en azul
+  linewidth=0.95\textwidth,          % anchura do entorno de código
+  numbers=left,                      % numéranse as liñas á esquerda
+  numbersep=5pt,                     % separación da numeración das liñas
+  numberstyle=\tiny\color{udcgray},  % estilo da numeración
+  rulecolor=\color{black},           % color do cadro arredor do código
+  showspaces=false,                  % non se mostran os espazos
+  showstringspaces=false,            % non se mostran os espazos nas cadeas de texto
+  showtabs=false,                    % non se mostran os tabuladores
+  stepnumber=1,                      % a numeración de liñas vai de dúas en dúas
+  stringstyle=\color{udcpink},       % as cadeas de texto literais aparecen en rosado
+  tabsize=2,	                     % os tabuladores equivalen a dous espazos
+  xleftmargin=0.05\textwidth         % identación extra desde a marxe esquerda
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% opcións relación de acrónimos e glosario %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\usepackage[toc,acronym]{glossaries}
+%\makeglossaries
+%\input{bibliografia/acronimos}
+%\input{bibliografia/glosario}
+
+\endinput
