@@ -1,14 +1,11 @@
 import { useKeyTracker, KEYBOARD_KEYS } from "../hooks/useKeyTracker";
-import { invoke } from "@tauri-apps/api/core";
 import "./Keyboard.css";
+import { invokePlayNote } from "../services/invokePlayNote";
 
 export default function Keyboard() {
   const onKeyPress: Record<string, () => void> = KEYBOARD_KEYS.reduce(
     (handlers, { keyPressed, note }) => {
-      handlers[keyPressed] = async () =>
-        invoke("play_note", {
-          note,
-        });
+      handlers[keyPressed] = () => invokePlayNote(note);
       return handlers;
     },
     {} as Record<string, () => void>
@@ -25,7 +22,7 @@ export default function Keyboard() {
               className={`key ${key.note} ${
                 keysPressed[key.keyPressed] ? "active" : ""
               }`}
-              onClick={() => console.log(key.note)}
+              onClick={onKeyPress[key.keyPressed]}
             >
               {key.keyPressed}
             </button>
