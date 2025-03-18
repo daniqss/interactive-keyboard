@@ -1,0 +1,72 @@
+.keyboard {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 160px;
+  background-color: #222;
+  padding: 20px;
+  z-index: 100;
+}
+
+.keyboard ul {
+  display: flex;
+  justify-content: center;
+  height: 100%;
+  list-style: none;
+}
+
+/* Teclas del piano */
+.key {
+  height: 120px;
+  width: 60px;
+  background-color: white;
+  border: 1px solid #000;
+  border-radius: 0 0 5px 5px;
+  margin: 0 2px;
+  cursor: pointer;
+  transition: background-color 0.1s;
+  position: relative;
+}
+
+/* Teclas negras del piano */
+.key.do-sharp {
+  background-color: black;
+  height: 80px;
+  width: 40px;
+  margin-left: -20px;
+  margin-right: -20px;
+  z-index: 2;
+}
+
+/* Efecto al presionar teclas */
+.key:active {
+  background-color: #ccc;
+}
+
+.key.do-sharp:active {
+  background-color: #333;
+}
+
+/* Colores para diferenciar las notas */
+.key.do {
+  background-color: #ff8a80;
+}
+.key.re {
+  background-color: #ffab80;
+}
+.key.mi {
+  background-color: #ffcc80;
+}
+.key.fa {
+  background-color: #ffecb3;
+}
+.key.sol {
+  background-color: #ccff90;
+}
+.key.la {
+  background-color: #80d8ff;
+}
+.key.si {
+  background-color: #b388ff;
+}
