@@ -8,4 +8,7 @@ pub enum Error {
 
     #[error(transparent)]
     SerialPort(#[from] serialport::Error),
+
+    #[error(transparent)]
+    Rodio(#[from] rodio::decoder::DecoderError),
 }
