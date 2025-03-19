@@ -67,10 +67,10 @@ pub struct AnimalSounds {
 impl AnimalSounds {
     pub fn new() -> Result<Self> {
         Ok(AnimalSounds {
-            elephant_path: "assets/elephant_sound.mp3".to_string(),
-            tiger_path: "assets/tiger_sound.mp3".to_string(),
-            dog_path: "assets/dog_sound.mp3".to_string(),
-            dolphin_path: "assets/dolphin_sound.mp3".to_string(),
+            elephant_path: "../assets/elephant_sound.mp3".to_string(),
+            tiger_path: "../assets/tiger_sound.mp3".to_string(),
+            dog_path: "../assets/dog_sound.mp3".to_string(),
+            dolphin_path: "../assets/dolphin_sound.mp3".to_string(),
         })
     }
 
