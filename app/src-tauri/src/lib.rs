@@ -2,12 +2,13 @@ pub mod animal;
 pub mod error;
 pub mod notes;
 pub mod prelude;
-use std::sync::Mutex;
+use error::Error;
+use std::{fs::File, io::BufReader, sync::Mutex, thread};
 
 use animal::{Animal, AnimalSounds};
 use notes::Note;
 use prelude::*;
-use rodio::{OutputStream, Sink};
+use rodio::{source::Speed, Decoder, OutputStream, Sink};
 use serialport::SerialPortInfo;
 use tauri::{Manager, State};
 
@@ -15,7 +16,6 @@ struct AppState {
     pub animal: Animal,
     pub port: Option<SerialPortInfo>,
     pub sounds: AnimalSounds,
-    pub sink: Sink,
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -25,17 +25,14 @@ pub fn run(port: Option<SerialPortInfo>) -> Result<()> {
             let main_window = app.get_webview_window("main").unwrap();
             main_window.set_title("Teclado Interactivo")?;
 
-            let (_stream, stream_handle) = OutputStream::try_default()?;
             let path = app.path();
 
             app.manage(Mutex::new(AppState {
                 animal: Animal::Elephant,
                 port,
                 sounds: AnimalSounds::new(path)?,
-                sink: Sink::try_new(&stream_handle)?,
             }));
 
-            println!("app running!");
             Ok(())
         })
         .plugin(tauri_plugin_opener::init())
@@ -47,7 +44,7 @@ pub fn run(port: Option<SerialPortInfo>) -> Result<()> {
 }
 
 #[tauri::command]
-fn play_note(note: String, state: State<'_, Mutex<AppState>>) {
+fn play_note(note: String, state: State<'_, Mutex<AppState>>) -> Result<()> {
     let state = state.lock().unwrap();
 
     println!("port is {:?}", state.port);
@@ -57,15 +54,32 @@ fn play_note(note: String, state: State<'_, Mutex<AppState>>) {
         Some(note) => {
             let sound = match animal.sound(&state.sounds, &note) {
                 Ok(sound) => sound,
-                Err(e) => {
-                    println!("Error loading sound: {}", e);
-                    return;
-                }
+                Err(e) => return Err(e.into()),
             };
 
             println!("Playing sound with animal {} and note {}", animal, note);
-            state.sink.append(sound);
+            thread::spawn(move || {
+                let (_stream, stream_handle) = match OutputStream::try_default() {
+                    Ok(stream) => stream,
+                    Err(e) => {
+                        eprintln!("Failed to get default output stream: {}", e);
+                        return;
+                    }
+                };
+                let sink = match Sink::try_new(&stream_handle) {
+                    Ok(sink) => sink,
+                    Err(e) => {
+                        eprintln!("Failed to create sink: {}", e);
+                        return;
+                    }
+                };
+                sink.append(sound);
+                sink.sleep_until_end();
+            });
+            println!("Sound played successfully");
+
+            Ok(())
         }
-        None => println!("Invalid note"),
+        None => Err(Error::Generic(format!("Note {} not found", note))),
     }
 }
