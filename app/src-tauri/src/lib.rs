@@ -1,39 +1,21 @@
 pub mod animal;
 pub mod error;
+pub mod notes;
 pub mod prelude;
+use error::Error;
 use std::sync::Mutex;
 
-use animal::Animal;
+use animal::{Animal, AnimalSounds};
+use notes::Note;
 use prelude::*;
+use rodio::{OutputStream, Sink};
 use serialport::SerialPortInfo;
 use tauri::{Manager, State};
 
-#[tauri::command]
-fn play_note(note: String, state: State<'_, Mutex<AppState>>) {
-    let state = state.lock().unwrap();
-
-    // println!("port is {:?}", state.port); {
-    if let Some(port) = &state.port {
-        println!("port is {:?}", port);
-    } else {
-        println!("no port");
-    }
-    match note.as_str() {
-        "do" => println!("DO! {}", state.animal),
-        "re" => println!("RE! {}", state.animal),
-        "mi" => println!("MI!"),
-        "fa" => println!("FA!"),
-        "sol" => println!("SOL! {}", state.animal),
-        "la" => println!("LA!"),
-        "si" => println!("SI!"),
-        "do-sharp" => println!("DO#!"),
-        _ => unreachable!(),
-    }
-}
-
 struct AppState {
-    pub animal: animal::Animal,
+    pub animal: Animal,
     pub port: Option<SerialPortInfo>,
+    pub sounds: AnimalSounds,
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -42,14 +24,15 @@ pub fn run(port: Option<SerialPortInfo>) -> Result<()> {
         .setup(|app| {
             let main_window = app.get_webview_window("main").unwrap();
             main_window.set_title("Teclado Interactivo")?;
-            // main_window.set_decorations(false)?;
+
+            let path = app.path();
 
             app.manage(Mutex::new(AppState {
                 animal: Animal::Elephant,
                 port,
+                sounds: AnimalSounds::new(path)?,
             }));
 
-            println!("app running!");
             Ok(())
         })
         .plugin(tauri_plugin_opener::init())
@@ -57,5 +40,35 @@ pub fn run(port: Option<SerialPortInfo>) -> Result<()> {
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 
+    Ok(())
+}
+
+#[tauri::command]
+fn play_note(note: String, state: State<'_, Mutex<AppState>>) -> Result<()> {
+    let state = state.lock().unwrap();
+
+    println!("port is {:?}", state.port);
+
+    let animal = state.animal;
+    match Note::new(&note) {
+        Some(note) => {
+            let sound = animal.sound(&state.sounds, &note)?;
+
+            #[cfg(test)]
+            println!("Playing note {} from animal {}", note, animal);
+
+            tauri::async_runtime::spawn(async move { play_sound(sound).await });
+            Ok(())
+        }
+        None => Err(Error::Generic(format!("Invalid note: {}", note))),
+    }
+}
+
+async fn play_sound(sound: impl rodio::Source<Item = i16> + Send + 'static) -> Result<()> {
+    let (_stream, stream_handle) = OutputStream::try_default()?;
+    let sink = Sink::try_new(&stream_handle)?;
+
+    sink.append(sound);
+    sink.sleep_until_end();
     Ok(())
 }

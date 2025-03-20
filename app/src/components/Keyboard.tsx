@@ -1,11 +1,11 @@
 import { useKeyTracker, KEYBOARD_KEYS } from "../hooks/useKeyTracker";
 import "./Keyboard.css";
-import { invokePlayNote } from "../services/invokePlayNote";
+import { playNote } from "../services/playNote";
 
 export default function Keyboard() {
   const onKeyPress: Record<string, () => void> = KEYBOARD_KEYS.reduce(
     (handlers, { keyPressed, note }) => {
-      handlers[keyPressed] = () => invokePlayNote(note);
+      handlers[keyPressed] = () => playNote(note);
       return handlers;
     },
     {} as Record<string, () => void>
