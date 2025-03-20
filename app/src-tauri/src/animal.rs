@@ -4,6 +4,11 @@ use rodio::Source;
 use std::fmt::Display;
 use std::fs::File;
 use std::io::BufReader;
+use std::path::PathBuf;
+use tauri::{
+    path::{BaseDirectory, PathResolver},
+    Wry,
+};
 
 use crate::notes::Note;
 use crate::prelude::*;
@@ -58,23 +63,23 @@ impl Animal {
 }
 
 pub struct AnimalSounds {
-    elephant_path: String,
-    tiger_path: String,
-    dog_path: String,
-    dolphin_path: String,
+    elephant_path: PathBuf,
+    tiger_path: PathBuf,
+    dog_path: PathBuf,
+    dolphin_path: PathBuf,
 }
 
 impl AnimalSounds {
-    pub fn new() -> Result<Self> {
+    pub fn new(path: &PathResolver<Wry>) -> Result<Self> {
         Ok(AnimalSounds {
-            elephant_path: "../assets/elephant_sound.mp3".to_string(),
-            tiger_path: "../assets/tiger_sound.mp3".to_string(),
-            dog_path: "../assets/dog_sound.mp3".to_string(),
-            dolphin_path: "../assets/dolphin_sound.mp3".to_string(),
+            elephant_path: path.resolve("assets/elephant_sound.mp3", BaseDirectory::Resource)?,
+            tiger_path: path.resolve("assets/elephant_sound.mp3", BaseDirectory::Resource)?,
+            dog_path: path.resolve("assets/elephant_sound.mp3", BaseDirectory::Resource)?,
+            dolphin_path: path.resolve("assets/elephant_sound.mp3", BaseDirectory::Resource)?,
         })
     }
 
-    fn load_decoder(path: &str) -> Result<Decoder<BufReader<File>>> {
+    fn load_decoder(path: &PathBuf) -> Result<Decoder<BufReader<File>>> {
         let file = File::open(path)?;
         Ok(Decoder::new(BufReader::new(file))?)
     }

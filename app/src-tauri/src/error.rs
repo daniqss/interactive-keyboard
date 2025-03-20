@@ -7,6 +7,9 @@ pub enum Error {
     Io(#[from] std::io::Error),
 
     #[error(transparent)]
+    Path(#[from] tauri::Error),
+
+    #[error(transparent)]
     SerialPort(#[from] serialport::Error),
 
     #[error(transparent)]

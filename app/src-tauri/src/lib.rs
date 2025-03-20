@@ -26,11 +26,12 @@ pub fn run(port: Option<SerialPortInfo>) -> Result<()> {
             main_window.set_title("Teclado Interactivo")?;
 
             let (_stream, stream_handle) = OutputStream::try_default()?;
+            let path = app.path();
 
             app.manage(Mutex::new(AppState {
                 animal: Animal::Elephant,
                 port,
-                sounds: AnimalSounds::new()?,
+                sounds: AnimalSounds::new(path)?,
                 sink: Sink::try_new(&stream_handle)?,
             }));
 

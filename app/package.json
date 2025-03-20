@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "tauri": "NO_STRIP=true tauri"
+    "tauri": "tauri"
   },
   "dependencies": {
     "react": "^18.3.1",
