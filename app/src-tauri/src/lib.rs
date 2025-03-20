@@ -3,12 +3,12 @@ pub mod error;
 pub mod notes;
 pub mod prelude;
 use error::Error;
-use std::{fs::File, io::BufReader, sync::Mutex, thread};
+use std::sync::Mutex;
 
 use animal::{Animal, AnimalSounds};
 use notes::Note;
 use prelude::*;
-use rodio::{source::Speed, Decoder, OutputStream, Sink};
+use rodio::{OutputStream, Sink};
 use serialport::SerialPortInfo;
 use tauri::{Manager, State};
 
@@ -52,34 +52,23 @@ fn play_note(note: String, state: State<'_, Mutex<AppState>>) -> Result<()> {
     let animal = state.animal;
     match Note::new(&note) {
         Some(note) => {
-            let sound = match animal.sound(&state.sounds, &note) {
-                Ok(sound) => sound,
-                Err(e) => return Err(e.into()),
-            };
+            let sound = animal.sound(&state.sounds, &note)?;
 
-            println!("Playing sound with animal {} and note {}", animal, note);
-            thread::spawn(move || {
-                let (_stream, stream_handle) = match OutputStream::try_default() {
-                    Ok(stream) => stream,
-                    Err(e) => {
-                        eprintln!("Failed to get default output stream: {}", e);
-                        return;
-                    }
-                };
-                let sink = match Sink::try_new(&stream_handle) {
-                    Ok(sink) => sink,
-                    Err(e) => {
-                        eprintln!("Failed to create sink: {}", e);
-                        return;
-                    }
-                };
-                sink.append(sound);
-                sink.sleep_until_end();
-            });
-            println!("Sound played successfully");
+            #[cfg(test)]
+            println!("Playing note {} from animal {}", note, animal);
 
+            tauri::async_runtime::spawn(async move { play_sound(sound).await });
             Ok(())
         }
-        None => Err(Error::Generic(format!("Note {} not found", note))),
+        None => Err(Error::Generic(format!("Invalid note: {}", note))),
     }
+}
+
+async fn play_sound(sound: impl rodio::Source<Item = i16> + Send + 'static) -> Result<()> {
+    let (_stream, stream_handle) = OutputStream::try_default()?;
+    let sink = Sink::try_new(&stream_handle)?;
+
+    sink.append(sound);
+    sink.sleep_until_end();
+    Ok(())
 }

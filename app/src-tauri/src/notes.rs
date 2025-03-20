@@ -48,7 +48,7 @@ impl Note {
             Note::Sol => 7,
             Note::La => 9,
             Note::Si => 11,
-            Note::DoSharp => 1,
+            Note::DoSharp => 12,
         }
     }
 }

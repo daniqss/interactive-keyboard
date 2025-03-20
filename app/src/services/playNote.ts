@@ -5,7 +5,7 @@ function playNote(note: string) {
   if (isTauri()) {
     invokePlayNote(note);
   } else {
-    const audio = new Audio(`../../assets/elephant_sound.mp3`);
+    const audio = new Audio(`../assets/elephant_sound.mp3`);
     audio
       .play()
       .then(() => console.log(`playing sound: ${note}`))
