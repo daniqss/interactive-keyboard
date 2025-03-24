@@ -73,9 +73,9 @@ impl AnimalSounds {
     pub fn new(path: &PathResolver<Wry>) -> Result<Self> {
         Ok(AnimalSounds {
             elephant_path: path.resolve("assets/elephant_sound.mp3", BaseDirectory::Resource)?,
-            tiger_path: path.resolve("assets/elephant_sound.mp3", BaseDirectory::Resource)?,
-            dog_path: path.resolve("assets/elephant_sound.mp3", BaseDirectory::Resource)?,
-            dolphin_path: path.resolve("assets/elephant_sound.mp3", BaseDirectory::Resource)?,
+            tiger_path: path.resolve("assets/tiger_sound.mp3", BaseDirectory::Resource)?,
+            dog_path: path.resolve("assets/dog_sound.mp3", BaseDirectory::Resource)?,
+            dolphin_path: path.resolve("assets/dolphin_sound.mp3", BaseDirectory::Resource)?,
         })
     }
 
