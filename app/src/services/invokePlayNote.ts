@@ -1,9 +1,8 @@
-import { invoke } from "@tauri-apps/api/core";
+import { invoke, isTauri } from "@tauri-apps/api/core";
 
 function invokePlayNote(note: string) {
-  invoke("play_note", {
-    note,
-  });
+  if (isTauri()) invoke("play_note", { note });
+  return isTauri();
 }
 
 export { invokePlayNote };

@@ -36,7 +36,7 @@ pub fn run(port: Option<SerialPortInfo>) -> Result<()> {
             Ok(())
         })
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![play_note])
+        .invoke_handler(tauri::generate_handler![play_note, select_animal])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 
@@ -70,5 +70,17 @@ async fn play_sound(sound: impl rodio::Source<Item = i16> + Send + 'static) -> R
 
     sink.append(sound);
     sink.sleep_until_end();
+    Ok(())
+}
+
+#[tauri::command]
+fn select_animal(animal: String, state: State<'_, Mutex<AppState>>) -> Result<()> {
+    let mut state = state.lock().unwrap();
+    let animal = Animal::new(&animal)
+        .ok_or_else(|| Error::Generic(format!("Invalid animal: {}", animal)))?;
+
+    state.animal = animal;
+    println!("Animal selected: {}", animal);
+
     Ok(())
 }

@@ -8,37 +8,37 @@ import {
 import { Animal } from "../types/animals";
 
 export type AnimalContextType = {
-  selectedAnimal: Animal | null;
-  setSelectedAnimal: Dispatch<SetStateAction<Animal | null>>;
+  selectedAnimal: Animal;
+  setSelectedAnimal: Dispatch<SetStateAction<Animal>>;
   animalList: Animal[];
 };
 
 const AnimalContext = createContext<AnimalContextType | null>(null);
 
 function AnimalProvider({ children }: { children: ReactNode }) {
-  const [selectedAnimal, setSelectedAnimal] = useState<Animal | null>(null);
   const [animalList] = useState<Animal[]>([
     {
       name: "Elefante",
-      sound: "./assets/sounds/elephant.mp3",
+      sound: "elephant_sound.mp3",
       image: "./assets/images/elephant.png",
     },
     {
       name: "Tigre",
-      sound: "./assets/sounds/tiger.mp3",
+      sound: "tiger_sound.wav",
       image: "./assets/images/tiger.png",
     },
     {
       name: "Perro",
-      sound: "./assets/sounds/dog.mp3",
+      sound: "dog_sound.wav",
       image: "./assets/images/dog.png",
     },
     {
       name: "Delfín",
-      sound: "./assets/sounds/dolphin.mp3",
+      sound: "dolphin_sound.wav",
       image: "./assets/images/dolphin.png",
     },
   ]);
+  const [selectedAnimal, setSelectedAnimal] = useState<Animal>(animalList[0]);
 
   const value = {
     selectedAnimal,
