@@ -2,6 +2,7 @@ pub mod animal;
 pub mod error;
 pub mod notes;
 pub mod prelude;
+pub mod utils;
 use error::Error;
 use std::sync::Mutex;
 
@@ -36,7 +37,11 @@ pub fn run(port: Option<SerialPortInfo>) -> Result<()> {
             Ok(())
         })
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![play_note, select_animal])
+        .invoke_handler(tauri::generate_handler![
+            play_note,
+            select_animal,
+            reconnect_port
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 
@@ -44,8 +49,8 @@ pub fn run(port: Option<SerialPortInfo>) -> Result<()> {
 }
 
 #[tauri::command]
-fn play_note(note: String, state: State<'_, Mutex<AppState>>) -> Result<()> {
-    let state = state.lock().unwrap();
+async fn play_note(note: String, state: State<'_, Mutex<AppState>>) -> Result<()> {
+    let state = state.lock().map_err(|e| Error::Generic(e.to_string()))?;
 
     println!("port is {:?}", state.port);
 
@@ -74,13 +79,26 @@ async fn play_sound(sound: impl rodio::Source<Item = i16> + Send + 'static) -> R
 }
 
 #[tauri::command]
-fn select_animal(animal: String, state: State<'_, Mutex<AppState>>) -> Result<()> {
-    let mut state = state.lock().unwrap();
-    let animal = Animal::new(&animal)
+async fn select_animal(animal: String, state: State<'_, Mutex<AppState>>) -> Result<()> {
+    let mut state = state.lock().map_err(|e| Error::Generic(e.to_string()))?;
+
+    state.animal = Animal::new(&animal)
         .ok_or_else(|| Error::Generic(format!("Invalid animal: {}", animal)))?;
 
-    state.animal = animal;
-    println!("Animal selected: {}", animal);
-
     Ok(())
+}
+
+#[tauri::command]
+fn reconnect_port(state: State<'_, Mutex<AppState>>) -> Result<String> {
+    let mut state = state.lock().map_err(|e| Error::Generic(e.to_string()))?;
+
+    state.port = utils::get_port();
+
+    Ok(format!(
+        "{{ port: {} }}",
+        match state.port.clone() {
+            Some(port) => format!("{{ name: {}}}", port.port_name),
+            None => "null".to_string(),
+        }
+    ))
 }
