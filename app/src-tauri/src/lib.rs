@@ -26,14 +26,24 @@ pub fn run(port: Option<SerialPortInfo>) -> Result<()> {
             let main_window = app.get_webview_window("main").unwrap();
             main_window.set_title("Teclado Interactivo")?;
 
-            let path = app.path();
-
-            app.manage(Mutex::new(AppState {
+            let state = Mutex::new(AppState {
                 animal: Animal::Elephant,
                 port,
-                sounds: AnimalSounds::new(path)?,
-            }));
+                sounds: AnimalSounds::new(app.path())?,
+            });
 
+            // must change https://rfdonnelly.github.io/posts/tauri-async-rust-process/
+            // i should use a channel through the main thread and the thread that listen the serial port
+            if let Some(port) = state
+                .lock()
+                .map_err(|e| Error::Generic(e.to_string()))?
+                .port
+                .clone()
+            {
+                tauri::async_runtime::spawn(async move { watch_serial(port).await });
+            }
+
+            app.manage(state);
             Ok(())
         })
         .plugin(tauri_plugin_opener::init())
@@ -93,6 +103,9 @@ fn reconnect_port(state: State<'_, Mutex<AppState>>) -> Result<String> {
     let mut state = state.lock().map_err(|e| Error::Generic(e.to_string()))?;
 
     state.port = utils::get_port();
+    if let Some(port) = state.port.clone() {
+        tauri::async_runtime::spawn(async move { watch_serial(port).await });
+    }
 
     Ok(format!(
         "{{ port: {} }}",
@@ -101,4 +114,19 @@ fn reconnect_port(state: State<'_, Mutex<AppState>>) -> Result<String> {
             None => "null".to_string(),
         }
     ))
+}
+
+// useless implementation, i could create and appstate here
+async fn watch_serial(port: SerialPortInfo) -> Result<()> {
+    let mut serial = serialport::new(&port.port_name, 115200)
+        .timeout(std::time::Duration::from_millis(10))
+        .open()?;
+
+    let mut buf: Vec<u8> = vec![0; 32];
+    loop {
+        match serial.read(&mut buf) {
+            Ok(bytes_read) if bytes_read > 0 => {}
+            _ => {}
+        }
+    }
 }
