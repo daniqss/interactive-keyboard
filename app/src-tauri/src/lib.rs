@@ -3,8 +3,9 @@ pub mod error;
 pub mod notes;
 pub mod prelude;
 pub mod utils;
+use std::sync::Arc;
+
 use error::Error;
-use std::sync::Mutex;
 
 use animal::{Animal, AnimalSounds};
 use notes::Note;
@@ -15,33 +16,37 @@ use tauri::{Manager, State};
 
 struct AppState {
     pub animal: Animal,
-    pub port: Option<SerialPortInfo>,
+    pub port: Arc<Option<SerialPortInfo>>,
     pub sounds: AnimalSounds,
+    pub port_sender: mpsc::Sender<Arc<std::option::Option<SerialPortInfo>>>,
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run(port: Option<SerialPortInfo>) -> Result<()> {
+    let (port_sender, port_receiver) = mpsc::channel(1);
+    let (note_sender, mut note_receiver) = mpsc::channel(10);
+
     tauri::Builder::default()
-        .setup(|app| {
+        .setup(move |app| {
             let main_window = app.get_webview_window("main").unwrap();
             main_window.set_title("Teclado Interactivo")?;
 
             let state = Mutex::new(AppState {
                 animal: Animal::Elephant,
-                port,
+                port: Arc::new(port),
                 sounds: AnimalSounds::new(app.path())?,
+                port_sender,
             });
 
-            // must change https://rfdonnelly.github.io/posts/tauri-async-rust-process/
-            // i should use a channel through the main thread and the thread that listen the serial port
-            if let Some(port) = state
-                .lock()
-                .map_err(|e| Error::Generic(e.to_string()))?
-                .port
-                .clone()
-            {
-                tauri::async_runtime::spawn(async move { watch_serial(port).await });
-            }
+            tauri::async_runtime::spawn(async move {
+                let _ = watch_serial(port_receiver, note_sender).await;
+            });
+
+            tauri::async_runtime::spawn(async move {
+                while let Some(note) = note_receiver.recv().await {
+                    println!("Note received: {:?}", note);
+                }
+            });
 
             app.manage(state);
             Ok(())
@@ -99,34 +104,78 @@ async fn select_animal(animal: String, state: State<'_, Mutex<AppState>>) -> Res
 }
 
 #[tauri::command]
-fn reconnect_port(state: State<'_, Mutex<AppState>>) -> Result<String> {
-    let mut state = state.lock().map_err(|e| Error::Generic(e.to_string()))?;
+async fn reconnect_port(app_state: State<'_, Mutex<AppState>>) -> Result<String> {
+    // Clone the port sender before locking the mutex
+    let sender = {
+        let state = app_state
+            .lock()
+            .map_err(|e| Error::Generic(e.to_string()))?;
+        state.port_sender.clone()
+    };
 
-    state.port = utils::get_port();
-    if let Some(port) = state.port.clone() {
-        tauri::async_runtime::spawn(async move { watch_serial(port).await });
+    // Get the new port outside of the mutex lock
+    let new_port = utils::get_port();
+
+    // If a new port is found, send it through the channel
+    if let Some(port) = new_port {
+        let port_arc = Arc::new(Some(port));
+
+        if sender.send(Arc::clone(&port_arc)).await.is_err() {
+            return Err(Error::Generic("Failed to send port".to_string()));
+        }
+
+        // Update the state in a separate lock
+        let mut state = app_state
+            .lock()
+            .map_err(|e| Error::Generic(e.to_string()))?;
+        state.port = port_arc;
     }
 
+    // Format the port information for return
+    let state = app_state
+        .lock()
+        .map_err(|e| Error::Generic(e.to_string()))?;
     Ok(format!(
         "{{ port: {} }}",
-        match state.port.clone() {
+        match state.port.as_ref() {
             Some(port) => format!("{{ name: {}}}", port.port_name),
             None => "null".to_string(),
         }
     ))
 }
 
-// useless implementation, i could create and appstate here
-async fn watch_serial(port: SerialPortInfo) -> Result<()> {
-    let mut serial = serialport::new(&port.port_name, 115200)
-        .timeout(std::time::Duration::from_millis(10))
-        .open()?;
-
-    let mut buf: Vec<u8> = vec![0; 32];
+async fn watch_serial(
+    mut port_receiver: mpsc::Receiver<Arc<std::option::Option<SerialPortInfo>>>,
+    note_sender: mpsc::Sender<String>,
+) {
+    // loop until receive a port
     loop {
-        match serial.read(&mut buf) {
-            Ok(bytes_read) if bytes_read > 0 => {}
-            _ => {}
+        let mut buf: Vec<u8> = vec![0; 32];
+        if let Some(port) = port_receiver.recv().await {
+            let port = match port.as_ref() {
+                Some(port) => port,
+                None => continue,
+            };
+            let mut serial = match serialport::new(&port.port_name, 9600)
+                .timeout(std::time::Duration::from_millis(10))
+                .open()
+            {
+                Ok(serial) => serial,
+                Err(_) => continue,
+            };
+
+            // loop until the serial read or the channel send fail
+            loop {
+                match serial.read(&mut buf) {
+                    Ok(bytes_read) if bytes_read > 0 => {
+                        let note = String::from_utf8_lossy(&buf[..bytes_read]).to_string();
+                        if let Err(_) = note_sender.send(note).await {
+                            break;
+                        }
+                    }
+                    _ => break,
+                }
+            }
         }
     }
 }
