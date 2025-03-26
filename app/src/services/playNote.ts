@@ -1,4 +1,4 @@
-import { invokePlayNote } from "./invokePlayNote";
+import { invokePlayNote } from "./tauri/invokePlayNote";
 import { Animal } from "../types/animals";
 
 function playNote(note: string, selectedAnimal: Animal) {
