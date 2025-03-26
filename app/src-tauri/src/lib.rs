@@ -3,9 +3,6 @@ pub mod error;
 pub mod notes;
 pub mod prelude;
 pub mod utils;
-use std::sync::Arc;
-
-use error::Error;
 
 use animal::{Animal, AnimalSounds};
 use notes::Note;
@@ -15,10 +12,10 @@ use serialport::SerialPortInfo;
 use tauri::{Manager, State};
 
 struct AppState {
-    pub animal: Animal,
+    pub animal: Arc<Animal>,
     pub port: Arc<Option<SerialPortInfo>>,
-    pub sounds: AnimalSounds,
-    pub port_sender: mpsc::Sender<Arc<std::option::Option<SerialPortInfo>>>,
+    pub sounds: Arc<AnimalSounds>,
+    pub port_sender: Arc<Sender<Arc<Option<SerialPortInfo>>>>,
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -31,20 +28,32 @@ pub fn run(port: Option<SerialPortInfo>) -> Result<()> {
             let main_window = app.get_webview_window("main").unwrap();
             main_window.set_title("Teclado Interactivo")?;
 
+            let animal = Arc::new(Animal::Elephant);
+            let port = Arc::new(port);
+            let sounds = Arc::new(AnimalSounds::new(app.path())?);
+            let port_sender = Arc::new(port_sender);
+
             let state = Mutex::new(AppState {
-                animal: Animal::Elephant,
-                port: Arc::new(port),
-                sounds: AnimalSounds::new(app.path())?,
-                port_sender,
+                animal: Arc::clone(&animal),
+                port: Arc::clone(&port),
+                sounds: Arc::clone(&sounds),
+                port_sender: Arc::clone(&port_sender),
             });
 
+            // thread to watch the serial port
             tauri::async_runtime::spawn(async move {
                 let _ = watch_serial(port_receiver, note_sender).await;
             });
 
+            // thread to receive notes from the serial port watcher
             tauri::async_runtime::spawn(async move {
                 while let Some(note) = note_receiver.recv().await {
-                    println!("Note received: {:?}", note);
+                    let animal = Arc::clone(&animal);
+                    let sounds = Arc::clone(&sounds);
+
+                    if let Err(e) = play_note(note, animal, sounds) {
+                        println!("Error playing note from esp32: {}", e);
+                    };
                 }
             });
 
@@ -53,7 +62,7 @@ pub fn run(port: Option<SerialPortInfo>) -> Result<()> {
         })
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
-            play_note,
+            play_note_command,
             select_animal,
             reconnect_port
         ])
@@ -64,15 +73,19 @@ pub fn run(port: Option<SerialPortInfo>) -> Result<()> {
 }
 
 #[tauri::command]
-async fn play_note(note: String, state: State<'_, Mutex<AppState>>) -> Result<()> {
+fn play_note_command(note: String, state: State<'_, Mutex<AppState>>) -> Result<()> {
     let state = state.lock().map_err(|e| Error::Generic(e.to_string()))?;
 
-    println!("port is {:?}", state.port);
+    let animal = Arc::clone(&state.animal);
+    let sounds = Arc::clone(&state.sounds);
 
-    let animal = state.animal;
+    play_note(note, animal, sounds)
+}
+
+fn play_note(note: String, animal: Arc<Animal>, sounds: Arc<AnimalSounds>) -> Result<()> {
     match Note::new(&note) {
         Some(note) => {
-            let sound = animal.sound(&state.sounds, &note)?;
+            let sound = animal.sound(&sounds, &note)?;
 
             #[cfg(test)]
             println!("Playing note {} from animal {}", note, animal);
@@ -97,8 +110,10 @@ async fn play_sound(sound: impl rodio::Source<Item = i16> + Send + 'static) -> R
 async fn select_animal(animal: String, state: State<'_, Mutex<AppState>>) -> Result<()> {
     let mut state = state.lock().map_err(|e| Error::Generic(e.to_string()))?;
 
-    state.animal = Animal::new(&animal)
-        .ok_or_else(|| Error::Generic(format!("Invalid animal: {}", animal)))?;
+    state.animal = Arc::new(
+        Animal::new(&animal)
+            .ok_or_else(|| Error::Generic(format!("Invalid animal: {}", animal)))?,
+    );
 
     Ok(())
 }
@@ -110,7 +125,7 @@ async fn reconnect_port(app_state: State<'_, Mutex<AppState>>) -> Result<String>
         let state = app_state
             .lock()
             .map_err(|e| Error::Generic(e.to_string()))?;
-        state.port_sender.clone()
+        Arc::clone(&state.port_sender)
     };
 
     // Get the new port outside of the mutex lock
@@ -145,8 +160,8 @@ async fn reconnect_port(app_state: State<'_, Mutex<AppState>>) -> Result<String>
 }
 
 async fn watch_serial(
-    mut port_receiver: mpsc::Receiver<Arc<std::option::Option<SerialPortInfo>>>,
-    note_sender: mpsc::Sender<String>,
+    mut port_receiver: Receiver<Arc<Option<SerialPortInfo>>>,
+    note_sender: Sender<String>,
 ) {
     // loop until receive a port
     loop {
@@ -156,7 +171,7 @@ async fn watch_serial(
                 Some(port) => port,
                 None => continue,
             };
-            let mut serial = match serialport::new(&port.port_name, 9600)
+            let mut serial = match serialport::new(&port.port_name, 115200)
                 .timeout(std::time::Duration::from_millis(10))
                 .open()
             {
