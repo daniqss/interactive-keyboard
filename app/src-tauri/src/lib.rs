@@ -4,6 +4,8 @@ pub mod notes;
 pub mod prelude;
 pub mod utils;
 
+use std::io::{BufRead, BufReader};
+
 use animal::{Animal, AnimalSounds};
 use notes::Note;
 use prelude::*;
@@ -21,7 +23,7 @@ struct AppState {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run(port: Option<SerialPortInfo>) -> Result<()> {
     let (port_sender, port_receiver) = mpsc::channel(1);
-    let (note_sender, mut note_receiver) = mpsc::channel(10);
+    let (note_sender, mut note_receiver) = mpsc::channel(100);
 
     tauri::Builder::default()
         .setup(move |app| {
@@ -47,13 +49,16 @@ pub fn run(port: Option<SerialPortInfo>) -> Result<()> {
 
             // thread to receive notes from the serial port watcher
             tauri::async_runtime::spawn(async move {
-                while let Some(note) = note_receiver.recv().await {
-                    let animal = Arc::clone(&animal);
-                    let sounds = Arc::clone(&sounds);
+                loop {
+                    if let Some(note) = note_receiver.recv().await {
+                        println!("Received note on tauri thread: {}", note);
 
-                    if let Err(e) = play_note(note, animal, sounds) {
-                        println!("Error playing note from esp32: {}", e);
-                    };
+                        if let Err(e) = play_note(note, Arc::clone(&animal), Arc::clone(&sounds)) {
+                            eprintln!("Error playing note from esp32: {}", e);
+                        };
+                    } else {
+                        println!("No note received on tauri thread");
+                    }
                 }
             });
 
@@ -165,33 +170,48 @@ async fn watch_serial(
 ) {
     // loop until receive a port
     loop {
-        let mut buf: Vec<u8> = vec![0; 32];
+        let mut buf = String::new();
         if let Some(port) = port_receiver.recv().await {
             let port = match port.as_ref() {
                 Some(port) => port,
-                None => continue,
+                None => {
+                    println!("No port found on port is none");
+                    continue;
+                }
             };
-            let mut serial = match serialport::new(&port.port_name, 115200)
+            let serial = match serialport::new(&port.port_name, 115200)
                 .timeout(std::time::Duration::from_millis(10))
                 .open()
             {
                 Ok(serial) => serial,
-                Err(_) => continue,
+                Err(_) => {
+                    println!("Failed to open serial port");
+                    continue;
+                }
             };
+            let mut serial = BufReader::new(serial);
 
+            println!("Serial port opened: {}", port.port_name);
             // loop until the serial read or the channel send fail
             loop {
-                match serial.read(&mut buf) {
+                match serial.read_line(&mut buf) {
                     Ok(bytes_read) if bytes_read > 0 => {
                         println!("Received {} bytes: {:?}", bytes_read, &buf[..bytes_read]);
-                        let note = String::from_utf8_lossy(&buf[..bytes_read]).to_string();
-                        if let Err(_) = note_sender.send(note).await {
+                        let note = buf.trim().to_string();
+                        println!("Received note on  serial watcher: {}", note);
+
+                        if let Err(e) = note_sender.send(note).await {
+                            eprintln!("Failed to send note to main thread: {}", e);
                             break;
                         }
                     }
-                    _ => break,
+                    _ => {}
                 }
             }
+        } else {
+            eprintln!("No port found on port receiver");
+            // Sleep for a while before checking again
+            std::thread::sleep(std::time::Duration::from_secs(1));
         }
     }
 }
