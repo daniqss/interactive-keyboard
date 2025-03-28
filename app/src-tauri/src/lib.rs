@@ -183,6 +183,7 @@ async fn watch_serial(
             loop {
                 match serial.read(&mut buf) {
                     Ok(bytes_read) if bytes_read > 0 => {
+                        println!("Received {} bytes: {:?}", bytes_read, &buf[..bytes_read]);
                         let note = String::from_utf8_lossy(&buf[..bytes_read]).to_string();
                         if let Err(_) = note_sender.send(note).await {
                             break;
