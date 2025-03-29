@@ -1,39 +1,44 @@
-import machine
-import sys
+from machine import Pin # type: ignore
 import time
-from typing import TypedDict, List
 
-class Button(TypedDict):
-    pin: int
-    note: str
-    pin_obj: machine.Pin
-
-buttons: List[Button] = [
-    {"pin": 13, "note": "do"},
-    {"pin": 12, "note": "re"},
-    {"pin": 14, "note": "mi"},
-    {"pin": 27, "note": "fa"},
-    {"pin": 26, "note": "sol"},
-    {"pin": 25, "note": "la"},
-    {"pin": 33, "note": "si"},
-    {"pin": 32, "note": "do_alto"}
+botons = [
+    Pin(26, Pin.IN, Pin.PULL_UP),
+    # Pin(25, Pin.IN, Pin.PULL_UP),
+    # Pin(33, Pin.IN, Pin.PULL_UP),
+    # Pin(32, Pin.IN, Pin.PULL_UP),
+    # Pin(35, Pin.IN, Pin.PULL_UP),
+    # Pin(34, Pin.IN, Pin.PULL_UP),
+    # Pin(39, Pin.IN, Pin.PULL_UP),
+    # Pin(36, Pin.IN, Pin.PULL_UP),
 ]
+notes = [
+    "do",
+    # "re",
+    # "mi",
+    # "fa",
+    # "sol",
+    # "la",
+    # "si",
+    # "do-sharp",
+]
+led = Pin(2, Pin.OUT)
 
-for button in buttons:
-    button["pin_obj"] = machine.Pin(button["pin"], machine.Pin.IN, machine.Pin.PULL_UP)
+def main():
+    while True:
+        for boton, note in zip(botons, notes):
+            if boton.value() == 0:
+                led.on()
 
-previous_states: List[int] = [1] * len(buttons)
+                print(note)
+                time.sleep_ms(200)
+                
+                while boton.value() == 0:
+                    pass
 
-while True:
-    for i, button in enumerate(buttons):
-        pin_obj: machine.Pin = button["pin_obj"]
-        current_state: int = pin_obj.value()
+                led.off()
 
-        if current_state == 0 and previous_states[i] == 1:
-            note: str = button["note"]
-            sys.stdout.write(note + "\n")
-            sys.stdout.flush()
+        
+        time.sleep_ms(50)
 
-        previous_states[i] = current_state
-
-    time.sleep(0.01)
+if __name__ == '__main__':
+    main()

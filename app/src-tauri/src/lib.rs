@@ -4,6 +4,8 @@ pub mod notes;
 pub mod prelude;
 pub mod utils;
 
+use std::io::{BufRead, BufReader};
+
 use animal::{Animal, AnimalSounds};
 use notes::Note;
 use prelude::*;
@@ -21,7 +23,7 @@ struct AppState {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run(port: Option<SerialPortInfo>) -> Result<()> {
     let (port_sender, port_receiver) = mpsc::channel(1);
-    let (note_sender, mut note_receiver) = mpsc::channel(10);
+    let (note_sender, mut note_receiver) = mpsc::channel(100);
 
     tauri::Builder::default()
         .setup(move |app| {
@@ -32,6 +34,7 @@ pub fn run(port: Option<SerialPortInfo>) -> Result<()> {
             let port = Arc::new(port);
             let sounds = Arc::new(AnimalSounds::new(app.path())?);
             let port_sender = Arc::new(port_sender);
+            let note_sender = Arc::new(note_sender);
 
             let state = Mutex::new(AppState {
                 animal: Arc::clone(&animal),
@@ -47,13 +50,16 @@ pub fn run(port: Option<SerialPortInfo>) -> Result<()> {
 
             // thread to receive notes from the serial port watcher
             tauri::async_runtime::spawn(async move {
-                while let Some(note) = note_receiver.recv().await {
-                    let animal = Arc::clone(&animal);
-                    let sounds = Arc::clone(&sounds);
+                loop {
+                    if let Some(note) = note_receiver.recv().await {
+                        println!("Received note on tauri thread: {}", note);
 
-                    if let Err(e) = play_note(note, animal, sounds) {
-                        println!("Error playing note from esp32: {}", e);
-                    };
+                        if let Err(e) = play_note(note, Arc::clone(&animal), Arc::clone(&sounds)) {
+                            eprintln!("Error playing note from esp32: {}", e);
+                        };
+                    } else {
+                        println!("No note received on tauri thread");
+                    }
                 }
             });
 
@@ -161,35 +167,51 @@ async fn reconnect_port(app_state: State<'_, Mutex<AppState>>) -> Result<String>
 
 async fn watch_serial(
     mut port_receiver: Receiver<Arc<Option<SerialPortInfo>>>,
-    note_sender: Sender<String>,
+    note_sender: Arc<Sender<String>>,
 ) {
-    // loop until receive a port
     loop {
-        let mut buf: Vec<u8> = vec![0; 32];
         if let Some(port) = port_receiver.recv().await {
             let port = match port.as_ref() {
                 Some(port) => port,
-                None => continue,
+                None => {
+                    println!("No port found");
+                    continue;
+                }
             };
-            let mut serial = match serialport::new(&port.port_name, 115200)
+
+            let serial = match serialport::new(&port.port_name, 115200)
                 .timeout(std::time::Duration::from_millis(10))
                 .open()
             {
                 Ok(serial) => serial,
-                Err(_) => continue,
+                Err(e) => {
+                    eprintln!("Failed to open serial port: {}", e);
+                    continue;
+                }
             };
 
-            // loop until the serial read or the channel send fail
+            let mut serial = BufReader::new(serial);
+            println!("Serial port opened: {}", port.port_name);
+
             loop {
-                match serial.read(&mut buf) {
+                let mut buf = String::new();
+                match serial.read_line(&mut buf) {
                     Ok(bytes_read) if bytes_read > 0 => {
-                        let note = String::from_utf8_lossy(&buf[..bytes_read]).to_string();
-                        if let Err(_) = note_sender.send(note).await {
-                            break;
-                        }
+                        let note = buf.trim().to_string();
+                        println!("Received {} bytes: {:?}", bytes_read, &buf);
+                        println!("Received note: {}", note);
+
+                        let note_sender = Arc::clone(&note_sender);
+                        tauri::async_runtime::spawn(async move {
+                            note_sender
+                                .send(note)
+                                .await
+                                .unwrap_or_else(|e| eprintln!("Failed to send note: {}", e));
+                        });
                     }
-                    _ => break,
+                    _ => {}
                 }
+                tokio::time::sleep(std::time::Duration::from_millis(10)).await;
             }
         }
     }
