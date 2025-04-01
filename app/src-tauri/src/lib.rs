@@ -25,23 +25,23 @@ pub fn run(port: Option<SerialPortInfo>) -> Result<()> {
     let (port_sender, port_receiver) = mpsc::channel(1);
     let (note_sender, mut note_receiver) = mpsc::channel(100);
 
+    let animal = Arc::new(Animal::Elephant);
+    let port = Arc::new(port);
+    let port_sender = Arc::new(port_sender);
+    let note_sender = Arc::new(note_sender);
+
     tauri::Builder::default()
         .setup(move |app| {
             let main_window = app.get_webview_window("main").unwrap();
             main_window.set_title("Teclado Interactivo")?;
 
-            let animal = Arc::new(Animal::Elephant);
-            let port = Arc::new(port);
             let sounds = Arc::new(AnimalSounds::new(app.path())?);
-            let port_sender = Arc::new(port_sender);
-            let note_sender = Arc::new(note_sender);
-
-            let state = Mutex::new(AppState {
+            let state = Arc::new(Mutex::new(AppState {
                 animal: Arc::clone(&animal),
                 port: Arc::clone(&port),
                 sounds: Arc::clone(&sounds),
                 port_sender: Arc::clone(&port_sender),
-            });
+            }));
 
             // thread to watch the serial port
             tauri::async_runtime::spawn(async move {
@@ -49,16 +49,22 @@ pub fn run(port: Option<SerialPortInfo>) -> Result<()> {
             });
 
             // thread to receive notes from the serial port watcher
-            tauri::async_runtime::spawn(async move {
-                loop {
-                    if let Some(note) = note_receiver.recv().await {
-                        println!("Received note on tauri thread: {}", note);
+            tauri::async_runtime::spawn({
+                let state: Arc<Mutex<AppState>> = Arc::clone(&state);
 
-                        if let Err(e) = play_note(note, Arc::clone(&animal), Arc::clone(&sounds)) {
-                            eprintln!("Error playing note from esp32: {}", e);
-                        };
-                    } else {
-                        println!("No note received on tauri thread");
+                async move {
+                    loop {
+                        if let Some(note) = note_receiver.recv().await {
+                            let locked_state = state.lock().unwrap();
+                            let animal = Arc::clone(&locked_state.animal);
+                            let sounds = Arc::clone(&locked_state.sounds);
+
+                            if let Err(e) = play_note(note, animal, sounds) {
+                                eprintln!("Error playing note from esp32: {}", e);
+                            };
+                        } else {
+                            println!("No note received on tauri thread");
+                        }
                     }
                 }
             });
@@ -79,7 +85,7 @@ pub fn run(port: Option<SerialPortInfo>) -> Result<()> {
 }
 
 #[tauri::command]
-fn play_note_command(note: String, state: State<'_, Mutex<AppState>>) -> Result<()> {
+fn play_note_command(note: String, state: State<'_, Arc<Mutex<AppState>>>) -> Result<()> {
     let state = state.lock().map_err(|e| Error::Generic(e.to_string()))?;
 
     let animal = Arc::clone(&state.animal);
@@ -113,7 +119,7 @@ async fn play_sound(sound: impl rodio::Source<Item = i16> + Send + 'static) -> R
 }
 
 #[tauri::command]
-async fn select_animal(animal: String, state: State<'_, Mutex<AppState>>) -> Result<()> {
+async fn select_animal(animal: String, state: State<'_, Arc<Mutex<AppState>>>) -> Result<()> {
     let mut state = state.lock().map_err(|e| Error::Generic(e.to_string()))?;
 
     state.animal = Arc::new(
@@ -125,7 +131,7 @@ async fn select_animal(animal: String, state: State<'_, Mutex<AppState>>) -> Res
 }
 
 #[tauri::command]
-async fn reconnect_port(app_state: State<'_, Mutex<AppState>>) -> Result<String> {
+async fn reconnect_port(app_state: State<'_, Arc<Mutex<AppState>>>) -> Result<String> {
     // Clone the port sender before locking the mutex
     let sender = {
         let state = app_state
