@@ -5,7 +5,7 @@ import { AnimalContext, AnimalContextType } from "./contexts/animal";
 import AnimalCard from "./components/AnimalCard";
 import Keyboard from "./components/Keyboard";
 import useAnimal from "./hooks/useAnimal";
-import { reconnectPort } from "./services/reconnectPort";
+import ReconnectButton from "./components/reconnectButton";
 
 function App() {
   const { animalList } = useContext(AnimalContext) as AnimalContextType;
@@ -15,7 +15,7 @@ function App() {
     <>
       <header>
         <h1>Animal Sounds</h1>
-        <button onClick={() => reconnectPort()}>hola</button>
+        <ReconnectButton />
       </header>
       <main className="main-container">
         <section className="animal-selection">
