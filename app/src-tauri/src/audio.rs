@@ -8,7 +8,7 @@ pub fn play_note(note: String, animal: Arc<Animal>, sounds: Arc<AnimalSounds>) -
         Some(note) => {
             let sound = animal.sound(&sounds, &note)?;
 
-            #[cfg(test)]
+            #[cfg(debug_assertions)]
             println!("Playing note {} from animal {}", note, animal);
 
             tauri::async_runtime::spawn(async move { play_sound(sound).await });
