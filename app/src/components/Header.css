@@ -1,0 +1,37 @@
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.65rem 1.5rem;
+}
+
+.header-container h1 {
+  font-size: 8rem;
+  margin: 0;
+}
+
+.header-spacer {
+  width: 2.5rem;
+}
+
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.reconnect-button {
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: 3rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f3f4f6;
+  border: none;
+  cursor: pointer;
+}
+
+.reconnect-button:hover {
+  background-color: #e5e7eb;
+}

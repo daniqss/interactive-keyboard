@@ -5,7 +5,7 @@ import { AnimalContext, AnimalContextType } from "./contexts/animal";
 import AnimalCard from "./components/AnimalCard";
 import Keyboard from "./components/Keyboard";
 import useAnimal from "./hooks/useAnimal";
-import ReconnectButton from "./components/ReconnectButton";
+import Header from "./components/Header";
 
 function App() {
   const { animalList } = useContext(AnimalContext) as AnimalContextType;
@@ -13,10 +13,7 @@ function App() {
 
   return (
     <>
-      <header>
-        <h1>Animal Sounds</h1>
-        <ReconnectButton />
-      </header>
+      <Header>Teclado Interactivo</Header>
       <main className="main-container">
         <section className="animal-selection">
           <ul>
