@@ -32,10 +32,10 @@
       "icons/icon.ico"
     ],
     "resources": [
-      "assets/elephant_sound.wav",
-      "assets/tiger_sound.wav",
-      "assets/dog_sound.wav",
-      "assets/dolphin_sound.wav"
+      "assets/audio/elephant_sound.wav",
+      "assets/audio/tiger_sound.wav",
+      "assets/audio/dog_sound.wav",
+      "assets/audio/dolphin_sound.wav"
     ]
   }
 }

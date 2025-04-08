@@ -5,7 +5,7 @@ import { AnimalContext, AnimalContextType } from "./contexts/animal";
 import AnimalCard from "./components/AnimalCard";
 import Keyboard from "./components/Keyboard";
 import useAnimal from "./hooks/useAnimal";
-import ReconnectButton from "./components/reconnectButton";
+import ReconnectButton from "./components/ReconnectButton";
 
 function App() {
   const { animalList } = useContext(AnimalContext) as AnimalContextType;

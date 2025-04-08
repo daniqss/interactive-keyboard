@@ -72,10 +72,12 @@ pub struct AnimalSounds {
 impl AnimalSounds {
     pub fn new(path: &PathResolver<Wry>) -> Result<Self> {
         Ok(AnimalSounds {
-            elephant_path: path.resolve("assets/elephant_sound.wav", BaseDirectory::Resource)?,
-            tiger_path: path.resolve("assets/tiger_sound.wav", BaseDirectory::Resource)?,
-            dog_path: path.resolve("assets/dog_sound.wav", BaseDirectory::Resource)?,
-            dolphin_path: path.resolve("assets/dolphin_sound.wav", BaseDirectory::Resource)?,
+            elephant_path: path
+                .resolve("assets/audio/elephant_sound.wav", BaseDirectory::Resource)?,
+            tiger_path: path.resolve("assets/audio/tiger_sound.wav", BaseDirectory::Resource)?,
+            dog_path: path.resolve("assets/audio/dog_sound.wav", BaseDirectory::Resource)?,
+            dolphin_path: path
+                .resolve("assets/audio/dolphin_sound.wav", BaseDirectory::Resource)?,
         })
     }
 
