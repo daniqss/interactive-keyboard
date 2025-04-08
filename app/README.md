@@ -34,3 +34,9 @@ bun run tauri
 ```bash
 bun tauri build
 ```
+
+# run website only
+```bash
+docker build -f Dockerfile -t interactive-keyboard-web .
+ docker run -p 80:80 interactive-keyboard-web:latest
+```

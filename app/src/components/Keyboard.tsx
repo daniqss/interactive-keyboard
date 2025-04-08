@@ -9,7 +9,7 @@ export default function Keyboard() {
 
   const onKeyPress: Record<string, () => void> = KEYBOARD_KEYS.reduce(
     (handlers, { keyPressed, note }) => {
-      handlers[keyPressed] = () => playNote(note, selectedAnimal);
+      handlers[keyPressed] = async () => playNote(note, selectedAnimal);
       return handlers;
     },
     {} as Record<string, () => void>

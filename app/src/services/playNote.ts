@@ -1,37 +1,36 @@
 import { invokePlayNote } from "./tauri/invokePlayNote";
 import { Animal } from "../types/animals";
-import { ANIMALS } from "../constants/animals";
 import { CONFIG } from "../config";
-const audioModules = import.meta.glob("../../src-tauri/assets/audio/*", {
+import { ANIMALS } from "../constants/animals";
+import.meta.glob("../../src-tauri/assets/audio/*", {
   eager: true,
   query: "url",
   import: "default",
 });
 
-const sounds: Record<string, string> = {};
+const audioBuffers = ANIMALS.reduce<Record<string, HTMLAudioElement>>(
+  (buffers, animal) => {
+    buffers[animal.name] = new Audio(`${CONFIG.audioPath}/${animal.sound}`);
+    return buffers;
+  },
+  {}
+);
 
-for (const animal of ANIMALS) {
-  for (const path in audioModules) {
-    if (path.endsWith(animal.sound)) {
-      sounds[animal.name] = audioModules[path] as string;
-      break;
-    }
-  }
-}
-
-function playNote(note: string, selectedAnimal: Animal) {
+async function playNote(note: string, selectedAnimal: Animal) {
   if (invokePlayNote(note)) return;
 
-  const audioPath = `${CONFIG.audioPath}/${selectedAnimal.sound}`;
+  if (!audioBuffers[selectedAnimal.name]) {
+    console.error(`Audio buffer not found for animal ${selectedAnimal.name}`);
+    return;
+  }
+  const requestedAudio = new Audio(audioBuffers[selectedAnimal.name].src);
 
-  console.log(sounds, audioModules, audioPath);
-
-  new Audio(audioPath)
+  requestedAudio
     .play()
     .then(() => console.log(`playing sound ${note} for ${selectedAnimal.name}`))
     .catch((error) =>
       console.error(
-        `Error playing sound ${audioPath} for ${selectedAnimal.name}\n`,
+        `Error playing sound ${CONFIG.audioPath}/${selectedAnimal.sound} for ${selectedAnimal.name}\n`,
         error
       )
     );

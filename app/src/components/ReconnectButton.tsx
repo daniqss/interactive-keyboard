@@ -1,8 +1,8 @@
-import { isTauri } from "@tauri-apps/api/core";
 import { reconnectPort } from "../services/tauri/reconnectPort";
+import { CONFIG } from "../config";
 
 function ReconnectButton() {
-  return <>{isTauri() && <TauriReconnectButton />}</>;
+  return <>{CONFIG.isTauri && <TauriReconnectButton />}</>;
 }
 
 function TauriReconnectButton() {
