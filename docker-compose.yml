@@ -1,0 +1,6 @@
+services:
+  client:
+    image: interactive-interaction-web
+    ports: 
+    - "80:80"
+    
