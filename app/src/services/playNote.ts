@@ -2,6 +2,7 @@ import { invokePlayNote } from "./tauri/invokePlayNote";
 import { Animal } from "../types/animals";
 import { CONFIG } from "../config";
 import { ANIMALS } from "../constants/animals";
+
 import.meta.glob("../../src-tauri/assets/audio/*", {
   eager: true,
   query: "url",
@@ -16,7 +17,7 @@ const audioBuffers = ANIMALS.reduce<Record<string, HTMLAudioElement>>(
   {}
 );
 
-async function playNote(note: string, selectedAnimal: Animal) {
+function playNote(note: string, selectedAnimal: Animal) {
   if (invokePlayNote(note)) return;
 
   if (!audioBuffers[selectedAnimal.name]) {
