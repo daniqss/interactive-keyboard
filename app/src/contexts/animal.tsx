@@ -5,8 +5,8 @@ import {
   SetStateAction,
   useState,
 } from "react";
-import { Animal } from "../types/animals";
-import { ANIMALS } from "../constants/animals";
+import { Animal } from "../types";
+import { ANIMALS } from "../constants";
 
 export type AnimalContextType = {
   selectedAnimal: Animal;

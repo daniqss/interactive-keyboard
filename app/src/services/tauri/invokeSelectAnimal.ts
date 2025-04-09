@@ -1,5 +1,5 @@
 import { invoke } from "@tauri-apps/api/core";
-import { Animal } from "../../types/animals";
+import { Animal } from "../../types";
 import { CONFIG } from "../../config";
 
 function invokeSelectAnimal(selectedAnimal: Animal) {

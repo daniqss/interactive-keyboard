@@ -1,7 +1,7 @@
 import { invokePlayNote } from "./tauri/invokePlayNote";
-import { Animal } from "../types/animals";
+import { Animal } from "../types";
 import { CONFIG } from "../config";
-import { ANIMALS } from "../constants/animals";
+import { ANIMALS } from "../constants";
 
 import.meta.glob("../../src-tauri/assets/audio/*", {
   eager: true,

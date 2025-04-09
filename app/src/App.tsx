@@ -1,6 +1,6 @@
 import "./App.css";
 import { useContext } from "react";
-import { Animal } from "./types/animals";
+import { Animal } from "./types";
 import { AnimalContext, AnimalContextType } from "./contexts/animal";
 import AnimalCard from "./components/AnimalCard";
 import Keyboard from "./components/Keyboard";

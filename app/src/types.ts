@@ -4,3 +4,8 @@ export interface Animal {
   image: string;
   imageAlt?: string;
 }
+
+export interface Key {
+  keyPressed: string;
+  note: string;
+}

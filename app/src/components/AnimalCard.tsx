@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { Animal } from "../types/animals";
+import { Animal } from "../types";
 import { AnimalContext, AnimalContextType } from "../contexts/animal";
 
 type AnimalCardProps = {
