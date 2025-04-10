@@ -15,7 +15,7 @@ COPY src-tauri/assets/audio ./src-tauri/assets/audio
 COPY src-tauri/assets/image ./src-tauri/assets/image
 
 RUN bun install
-RUN bun run build
+RUN VITE_COMPLETE="true" bun run build
 
 FROM nginx:stable-alpine
 COPY --from=builder /app/dist /usr/share/nginx/html
