@@ -2,7 +2,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Arial", sans-serif;
+  font-family: Verdana, "Arial", sans-serif;
 }
 
 body,
@@ -19,17 +19,38 @@ html {
   width: 100%;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 30px 5%;
+  padding: 20px 5%;
   box-sizing: border-box;
+  height: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.animal-selection::-webkit-scrollbar {
+  width: 8px;
+}
+
+.animal-selection::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.animal-selection::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.animal-selection::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
 
 .animal-selection ul {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 30px;
   list-style: none;
   padding: 0;
   margin: 0;
+  grid-template-columns: repeat(4, 1fr);
 }
 
 .animal-selection li {
@@ -37,19 +58,18 @@ html {
   justify-content: center;
 }
 
-@media (max-width: 768px) {
-  .animal-selection {
-    padding: 20px 4%;
-  }
-
+@media (max-width: 1200px) {
   .animal-selection ul {
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 768px) {
   .animal-selection ul {
     grid-template-columns: 1fr;
+  }
+
+  .animal-selection {
+    max-height: 85vh;
   }
 }

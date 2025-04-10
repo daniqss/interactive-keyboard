@@ -2,10 +2,12 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 100%;
+  height: 350px; /* Tamaño base para pantallas grandes */
   border-radius: 12px;
   cursor: pointer;
   padding: 2px;
+  transition: transform 0.2s, box-shadow 0.2s, border 0.2s;
+  border: 3px solid transparent;
 }
 
 .animal-card:hover {
@@ -48,4 +50,61 @@
 
 .animal-card.selected-animal {
   box-shadow: 0 10px 20px rgba(50, 50, 50, 0.95);
+}
+
+/* Media queries para ajustar el tamaño según la pantalla */
+@media (max-width: 1200px) {
+  .animal-card {
+    height: 320px;
+  }
+
+  .animal-name h2 {
+    font-size: 1.8rem;
+  }
+}
+
+@media (max-width: 992px) {
+  .animal-card {
+    height: 280px;
+  }
+
+  .animal-name h2 {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .animal-card {
+    height: 250px;
+  }
+
+  .animal-name h2 {
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .animal-card {
+    height: 220px;
+  }
+
+  .animal-name h2 {
+    font-size: 1.1rem;
+  }
+}
+
+/* Para pantallas muy pequeñas */
+@media (max-width: 400px) {
+  .animal-card {
+    height: 200px;
+  }
+
+  .animal-name h2 {
+    font-size: 1rem;
+  }
+
+  .animal-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(50, 50, 50, 0.6);
+  }
 }

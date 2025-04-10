@@ -8,6 +8,7 @@
 .header-container h1 {
   font-size: 8rem;
   margin: 0;
+  transition: font-size 0.3s ease;
 }
 
 .header-spacer {
@@ -30,8 +31,102 @@
   background-color: #f3f4f6;
   border: none;
   cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .reconnect-button:hover {
   background-color: #e5e7eb;
+}
+
+/* Media queries para pantallas más pequeñas */
+@media (max-width: 1200px) {
+  .header-container h1 {
+    font-size: 6rem;
+  }
+
+  .reconnect-button {
+    width: 2.75rem;
+    height: 2.75rem;
+    margin-bottom: 2.5rem;
+  }
+}
+
+@media (max-width: 992px) {
+  .header-container {
+    padding: 0.5rem 1.25rem;
+  }
+
+  .header-container h1 {
+    font-size: 5rem;
+  }
+
+  .header-spacer {
+    width: 2rem;
+  }
+
+  .reconnect-button {
+    width: 2.5rem;
+    height: 2.5rem;
+    margin-bottom: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .header-container {
+    padding: 0.4rem 1rem;
+  }
+
+  .header-container h1 {
+    font-size: 3.5rem;
+  }
+
+  .header-spacer {
+    width: 1.5rem;
+  }
+
+  .reconnect-button {
+    width: 2.25rem;
+    height: 2.25rem;
+    margin-bottom: 1.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .header-container {
+    padding: 0.3rem 0.75rem;
+  }
+
+  .header-container h1 {
+    font-size: 2.5rem;
+  }
+
+  .header-spacer {
+    width: 1rem;
+  }
+
+  .reconnect-button {
+    width: 2rem;
+    height: 2rem;
+    margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .header-container {
+    padding: 0.25rem 0.5rem;
+  }
+
+  .header-container h1 {
+    font-size: 2rem;
+  }
+
+  .header-spacer {
+    width: 0.75rem;
+  }
+
+  .reconnect-button {
+    width: 1.75rem;
+    height: 1.75rem;
+    margin-bottom: 0.75rem;
+  }
 }
