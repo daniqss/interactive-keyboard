@@ -11,9 +11,12 @@ import.meta.glob("../src-tauri/assets/image/*", {
   import: "default",
 });
 
-const isDev = import.meta.env.MODE === "development";
+const { VITE_COMPLETE, MODE } = import.meta.env;
+const isDev = MODE === "development";
+const completeKeyboard = VITE_COMPLETE === "true";
 
 export const CONFIG = {
+  completeKeyboard,
   isTauri: isTauri(),
   isDev,
   audioPath: isDev ? "../../src-tauri/assets/audio" : "/assets",

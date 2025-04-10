@@ -32,13 +32,19 @@ export const ANIMALS: Animal[] = [
   },
 ];
 
-export const KEYS: Key[] = [
-  { keyPressed: "a", note: "do" },
-  { keyPressed: "s", note: "re" },
-  { keyPressed: "d", note: "mi" },
-  { keyPressed: "f", note: "fa" },
-  { keyPressed: "j", note: "sol" },
-  { keyPressed: "k", note: "la" },
-  { keyPressed: "l", note: "si" },
-  { keyPressed: "ñ", note: "do-sharp" },
-];
+export const KEYS: Key[] = CONFIG.completeKeyboard
+  ? [
+      { keyPressed: "a", note: "do" },
+      { keyPressed: "s", note: "re" },
+      { keyPressed: "d", note: "mi" },
+      { keyPressed: "f", note: "fa" },
+      { keyPressed: "j", note: "sol" },
+      { keyPressed: "k", note: "la" },
+      { keyPressed: "l", note: "si" },
+      { keyPressed: "ñ", note: "do-sharp" },
+    ]
+  : [
+      { keyPressed: "s", note: "re" },
+      { keyPressed: "j", note: "sol" },
+      { keyPressed: "l", note: "si" },
+    ];
