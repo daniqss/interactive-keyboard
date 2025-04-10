@@ -4,3 +4,9 @@ interactive keyboard with animal sounds for inclusive learning. Project for the 
 # structure
 - [app](./app/README.md): multiplatform client for interactive keyboard
 - [docs](./docs/README.md): simplified version of the FIC TFG report (in LaTeX)
+
+# run docker compose
+```bash
+make build
+make run
+```

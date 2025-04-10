@@ -1,23 +1,23 @@
-import { useEffect, useState } from "react";
-
-const KEYBOARD_KEYS = [
-  { keyPressed: "a", note: "do" },
-  { keyPressed: "s", note: "re" },
-  { keyPressed: "d", note: "mi" },
-  { keyPressed: "f", note: "fa" },
-  { keyPressed: "j", note: "sol" },
-  { keyPressed: "k", note: "la" },
-  { keyPressed: "l", note: "si" },
-  { keyPressed: "ñ", note: "do-sharp" },
-];
+import { useContext, useEffect, useState } from "react";
+import { KEYS as KEYBOARD_KEYS } from "../constants";
+import { playNote } from "../services/playNote";
+import { AnimalContext, AnimalContextType } from "../contexts/animal";
 
 type Key = (typeof KEYBOARD_KEYS)[number]["keyPressed"];
-type KeyPressHandlers = Partial<Record<Key, () => void>>;
 
 type KeysPressed = Partial<Record<Key, boolean>>;
 
-function useKeyTracker(onKeyPress: KeyPressHandlers = {}): KeysPressed {
+function useKeyTracker() {
   const [keysPressed, setKeysPressed] = useState<KeysPressed>({});
+  const { selectedAnimal } = useContext(AnimalContext) as AnimalContextType;
+
+  const onKeyPress: Record<string, () => void> = KEYBOARD_KEYS.reduce(
+    (handlers, { keyPressed, note }) => {
+      handlers[keyPressed] = () => playNote(note, selectedAnimal);
+      return handlers;
+    },
+    {} as Record<string, () => void>
+  );
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -45,7 +45,7 @@ function useKeyTracker(onKeyPress: KeyPressHandlers = {}): KeysPressed {
     };
   }, [keysPressed, onKeyPress]);
 
-  return keysPressed;
+  return [keysPressed, onKeyPress] as const;
 }
 
 export { useKeyTracker, KEYBOARD_KEYS };

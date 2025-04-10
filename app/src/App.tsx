@@ -1,11 +1,11 @@
-import "./App.css";
+import "./styles/App.css";
 import { useContext } from "react";
-import { Animal } from "./types/animals";
+import { Animal } from "./types";
 import { AnimalContext, AnimalContextType } from "./contexts/animal";
 import AnimalCard from "./components/AnimalCard";
 import Keyboard from "./components/Keyboard";
 import useAnimal from "./hooks/useAnimal";
-import { reconnectPort } from "./services/reconnectPort";
+import Header from "./components/Header";
 
 function App() {
   const { animalList } = useContext(AnimalContext) as AnimalContextType;
@@ -13,10 +13,7 @@ function App() {
 
   return (
     <>
-      <header>
-        <h1>Animal Sounds</h1>
-        <button onClick={() => reconnectPort()}>hola</button>
-      </header>
+      <Header>Teclado Interactivo</Header>
       <main className="main-container">
         <section className="animal-selection">
           <ul>

@@ -1,21 +1,8 @@
-import { useContext } from "react";
 import { useKeyTracker, KEYBOARD_KEYS } from "../hooks/useKeyTracker";
-import { AnimalContext, AnimalContextType } from "../contexts/animal";
-import { playNote } from "../services/playNote";
-import "./Keyboard.css";
+import "../styles/Keyboard.css";
 
 export default function Keyboard() {
-  const { selectedAnimal } = useContext(AnimalContext) as AnimalContextType;
-
-  const onKeyPress: Record<string, () => void> = KEYBOARD_KEYS.reduce(
-    (handlers, { keyPressed, note }) => {
-      handlers[keyPressed] = () => playNote(note, selectedAnimal);
-      return handlers;
-    },
-    {} as Record<string, () => void>
-  );
-
-  const keysPressed = useKeyTracker(onKeyPress);
+  const [keysPressed, onKeyPress] = useKeyTracker();
 
   return (
     <footer className="keyboard">
@@ -28,7 +15,10 @@ export default function Keyboard() {
               }`}
               onClick={onKeyPress[key.keyPressed]}
             >
-              {key.keyPressed}
+              <h3>{key.keyPressed}</h3>
+              <span className="note">
+                {key.note === "do-sharp" ? "do#" : key.note}
+              </span>
             </button>
           </li>
         ))}

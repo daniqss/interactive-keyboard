@@ -20,7 +20,8 @@ sudo pacman -S --needed \
 
 # with chaotic aur
 sudo pacman -S --needed bun
-# or with curl -fsSL https://bun.sh/install | bash
+# or with
+curl -fsSL https://bun.sh/install | bash
 
 sudo pacman -S --needed rust
 ```

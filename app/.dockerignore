@@ -1,0 +1,8 @@
+src-tauri
+node_modules
+dist
+.git
+.vscode
+
+!src-tauri/assets/audio
+!src-tauri/assets/image

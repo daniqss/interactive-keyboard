@@ -1,0 +1,101 @@
+.animal-card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 350px;
+  border-radius: 12px;
+  cursor: pointer;
+  padding: 2px;
+  transition: transform 0.2s, box-shadow 0.2s, border 0.2s;
+  border: 1px solid rgb(50, 50, 50);
+}
+
+.animal-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(100, 100, 100, 0.6);
+  border: 3px solid rgb(50, 50, 50);
+}
+
+.image-container {
+  width: 100%;
+  height: 80%;
+  overflow: hidden;
+}
+
+.animal-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s;
+  border-radius: 12px;
+}
+
+.animal-name h2 {
+  margin: 0;
+  font-size: 3rem;
+  color: #333;
+  text-align: center;
+  font-weight: 600;
+}
+
+.animal-card.selected-animal {
+  box-shadow: 0 10px 20px rgba(50, 50, 50, 0.99);
+  border: 3px solid rgb(50, 50, 50);
+}
+
+@media (max-width: 1200px) {
+  .animal-card {
+    height: 320px;
+  }
+
+  .animal-name h2 {
+    font-size: 2.2rem;
+  }
+}
+
+@media (max-width: 992px) {
+  .animal-card {
+    height: 280px;
+  }
+
+  .animal-name h2 {
+    font-size: 1.8rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .animal-card {
+    height: 250px;
+  }
+
+  .animal-name h2 {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .animal-card {
+    height: 220px;
+  }
+
+  .animal-name h2 {
+    font-size: 1.5rem;
+  }
+}
+
+/* Para pantallas muy pequeñas */
+@media (max-width: 400px) {
+  .animal-card {
+    height: 200px;
+  }
+
+  .animal-name h2 {
+    font-size: 1.3rem;
+  }
+
+  .animal-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(100, 100, 100, 0.6);
+  }
+}

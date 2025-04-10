@@ -1,0 +1,132 @@
+.keyboard {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #222;
+  padding: 0.2rem 0.5rem;
+  z-index: 100;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.keyboard ul {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  list-style: none;
+  padding: 0;
+  margin: 1.4rem;
+  gap: 8px;
+}
+
+.key {
+  height: 12rem;
+  width: 6rem;
+  border: 2px solid #000;
+  border-radius: 0 0 8px 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: end;
+  padding-bottom: 10px;
+  font-weight: bold;
+  color: #030303;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+  h3 {
+    font-size: 3rem;
+  }
+  span {
+    font-size: 1.5rem;
+  }
+}
+
+.key.do {
+  background-color: #ff8a80;
+}
+.key.re {
+  background-color: #ffab80;
+}
+.key.mi {
+  background-color: #ffcc80;
+}
+.key.fa {
+  background-color: #ffecb3;
+}
+.key.sol {
+  background-color: #ccff90;
+}
+.key.la {
+  background-color: #80d8ff;
+}
+.key.si {
+  background-color: #b388ff;
+}
+
+.key.active {
+  transform: scale(1.3) translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+  filter: brightness(0.5);
+  border-width: 3px;
+  font-weight: 900;
+  color: rgba(0, 0, 0, 0.9);
+}
+
+.key:hover:not(.active) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+}
+
+.key:active {
+  transform: scale(1.05) translateY(-3px);
+  filter: brightness(0.2);
+}
+
+@media (max-width: 768px) {
+  .keyboard {
+    padding: 0.15rem 0.3rem;
+  }
+
+  .key {
+    height: 8rem;
+    width: 4rem;
+    gap: 6px;
+    h3 {
+      font-size: 2.5rem;
+    }
+    span {
+      font-size: 1rem;
+    }
+  }
+
+  .keyboard ul {
+    margin: 0.4rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .keyboard {
+    padding: 0.2rem 0rem;
+  }
+
+  .key {
+    font-size: 1.2rem;
+    width: 2.5rem;
+    h3 {
+      font-size: 1.5rem;
+    }
+    span {
+      font-size: 1rem;
+    }
+  }
+
+  .keyboard ul {
+    gap: 2px;
+    margin: 0.2rem;
+  }
+}

@@ -1,9 +1,10 @@
-import { invoke, isTauri } from "@tauri-apps/api/core";
-import { Animal } from "../../types/animals";
+import { invoke } from "@tauri-apps/api/core";
+import { Animal } from "../../types";
+import { CONFIG } from "../../config";
 
 function invokeSelectAnimal(selectedAnimal: Animal) {
-  if (isTauri()) invoke("select_animal", { animal: selectedAnimal.name });
-  return isTauri();
+  if (CONFIG.isTauri) invoke("select_animal", { animal: selectedAnimal.name });
+  return CONFIG.isTauri;
 }
 
 export { invokeSelectAnimal };
