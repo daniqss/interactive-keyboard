@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { useKeyTracker, KEYBOARD_KEYS } from "../hooks/useKeyTracker";
 import { AnimalContext, AnimalContextType } from "../contexts/animal";
 import { playNote } from "../services/playNote";
-import "./Keyboard.css";
+import "../styles/Keyboard.css";
 
 export default function Keyboard() {
   const { selectedAnimal } = useContext(AnimalContext) as AnimalContextType;

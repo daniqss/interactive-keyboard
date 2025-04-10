@@ -1,5 +1,5 @@
 import ReconnectButton from "./ReconnectButton";
-import "./Header.css";
+import "../styles/Header.css";
 
 function Header({ children }: { children: React.ReactNode }) {
   return (

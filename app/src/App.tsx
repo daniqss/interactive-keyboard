@@ -1,4 +1,4 @@
-import "./App.css";
+import "./styles/App.css";
 import { useContext } from "react";
 import { Animal } from "./types";
 import { AnimalContext, AnimalContextType } from "./contexts/animal";

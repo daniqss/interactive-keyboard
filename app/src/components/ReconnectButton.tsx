@@ -1,6 +1,6 @@
 import { reconnectPort } from "../services/tauri/reconnectPort";
 import { CONFIG } from "../config";
-import "./Header.css";
+import "../styles/Header.css";
 import ReloadIcon from "./icons/ReloadIcon";
 
 function ReconnectButton() {

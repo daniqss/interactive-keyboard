@@ -1,11 +1,10 @@
 import { invokePlayNote } from "./tauri/invokePlayNote";
 import { Animal } from "../types";
-import { CONFIG } from "../config";
 import { ANIMALS } from "../constants";
 
 const audioBuffers = ANIMALS.reduce<Record<string, HTMLAudioElement>>(
   (buffers, animal) => {
-    buffers[animal.name] = new Audio(`${CONFIG.audioPath}/${animal.sound}`);
+    buffers[animal.name] = new Audio(animal.sound);
     return buffers;
   },
   {}
@@ -25,7 +24,7 @@ function playNote(note: string, selectedAnimal: Animal) {
     .then(() => console.log(`playing sound ${note} for ${selectedAnimal.name}`))
     .catch((error) =>
       console.error(
-        `Error playing sound ${CONFIG.audioPath}/${selectedAnimal.sound} for ${selectedAnimal.name}\n`,
+        `Error playing sound ${selectedAnimal.sound} for ${selectedAnimal.name}\n`,
         error
       )
     );

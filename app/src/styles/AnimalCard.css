@@ -1,0 +1,51 @@
+.animal-card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  cursor: pointer;
+  padding: 2px;
+}
+
+.animal-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(50, 50, 50, 0.6);
+  border: 3px solid rgb(50, 50, 50);
+}
+
+.image-container {
+  width: 100%;
+  height: 80%;
+  overflow: hidden;
+}
+
+.animal-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s;
+  border-radius: 12px;
+}
+
+.animal-name {
+  height: 20%;
+  width: 100%;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+}
+
+.animal-name h2 {
+  margin: 0;
+  font-size: 2rem;
+  color: #333;
+  text-align: center;
+  font-weight: 600;
+}
+
+.animal-card.selected-animal {
+  box-shadow: 0 10px 20px rgba(50, 50, 50, 0.95);
+}
