@@ -3,12 +3,6 @@ import { Animal } from "../types";
 import { CONFIG } from "../config";
 import { ANIMALS } from "../constants";
 
-import.meta.glob("../../src-tauri/assets/audio/*", {
-  eager: true,
-  query: "url",
-  import: "default",
-});
-
 const audioBuffers = ANIMALS.reduce<Record<string, HTMLAudioElement>>(
   (buffers, animal) => {
     buffers[animal.name] = new Audio(`${CONFIG.audioPath}/${animal.sound}`);

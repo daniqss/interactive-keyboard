@@ -1,6 +1,6 @@
 services:
   client:
-    image: interactive-interaction-web
+    image: interactive-keyboard-web
     ports: 
     - "80:80"
     

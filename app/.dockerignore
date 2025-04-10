@@ -5,3 +5,4 @@ dist
 .vscode
 
 !src-tauri/assets/audio
+!src-tauri/assets/image

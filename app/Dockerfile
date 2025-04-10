@@ -12,6 +12,7 @@ COPY public ./public
 COPY src ./src
 
 COPY src-tauri/assets/audio ./src-tauri/assets/audio
+COPY src-tauri/assets/image ./src-tauri/assets/image
 
 RUN bun install
 RUN bun run build
