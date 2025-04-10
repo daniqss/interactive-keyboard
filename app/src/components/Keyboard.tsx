@@ -15,7 +15,10 @@ export default function Keyboard() {
               }`}
               onClick={onKeyPress[key.keyPressed]}
             >
-              {key.keyPressed}
+              <h3>{key.keyPressed}</h3>
+              <span className="note">
+                {key.note === "do-sharp" ? "do#" : key.note}
+              </span>
             </button>
           </li>
         ))}

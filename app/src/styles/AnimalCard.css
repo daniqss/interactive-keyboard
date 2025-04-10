@@ -7,7 +7,7 @@
   cursor: pointer;
   padding: 2px;
   transition: transform 0.2s, box-shadow 0.2s, border 0.2s;
-  border: 0px solid transparent;
+  border: 1px solid rgb(50, 50, 50);
 }
 
 .animal-card:hover {
@@ -23,21 +23,12 @@
 }
 
 .animal-image {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: transform 0.3s;
   border-radius: 12px;
-}
-
-.animal-name {
-  height: 20%;
-  width: 100%;
-  background-color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 10px;
 }
 
 .animal-name h2 {
@@ -49,7 +40,8 @@
 }
 
 .animal-card.selected-animal {
-  box-shadow: 0 10px 20px rgba(50, 50, 50, 0.95);
+  box-shadow: 0 10px 20px rgba(50, 50, 50, 0.99);
+  border: 3px solid rgb(50, 50, 50);
 }
 
 @media (max-width: 1200px) {

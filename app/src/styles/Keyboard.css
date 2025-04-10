@@ -24,19 +24,26 @@
 .key {
   height: 12rem;
   width: 6rem;
-  font-size: 3rem;
   border: 2px solid #000;
   border-radius: 0 0 8px 8px;
   cursor: pointer;
   transition: all 0.2s ease;
   position: relative;
   display: flex;
-  align-items: flex-end;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  justify-content: end;
   padding-bottom: 10px;
   font-weight: bold;
   color: #030303;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+  h3 {
+    font-size: 3rem;
+  }
+  span {
+    font-size: 1.5rem;
+  }
 }
 
 .key.do {
@@ -89,6 +96,12 @@
     height: 8rem;
     width: 4rem;
     gap: 6px;
+    h3 {
+      font-size: 2.5rem;
+    }
+    span {
+      font-size: 1rem;
+    }
   }
 
   .keyboard ul {
@@ -104,6 +117,12 @@
   .key {
     font-size: 1.2rem;
     width: 2.5rem;
+    h3 {
+      font-size: 1.5rem;
+    }
+    span {
+      font-size: 1rem;
+    }
   }
 
   .keyboard ul {
