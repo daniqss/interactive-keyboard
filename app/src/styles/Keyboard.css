@@ -3,52 +3,41 @@
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 160px;
   background-color: #222;
-  padding: 20px;
+  padding: 0.2rem 0.5rem;
   z-index: 100;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .keyboard ul {
   display: flex;
   justify-content: center;
+  align-items: center;
   height: 100%;
   list-style: none;
+  padding: 0;
+  margin: 0;
+  gap: 8px;
 }
 
-/* Teclas del piano */
 .key {
   height: 120px;
   width: 60px;
-  background-color: white;
-  border: 1px solid #000;
-  border-radius: 0 0 5px 5px;
-  margin: 0 2px;
+  border: 2px solid #000;
+  border-radius: 0 0 8px 8px;
   cursor: pointer;
-  transition: background-color 0.1s;
+  transition: all 0.2s ease;
   position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 10px;
+  font-weight: bold;
+  color: #030303;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* Teclas negras del piano */
-.key.do-sharp {
-  background-color: black;
-  height: 80px;
-  width: 40px;
-  margin-left: -20px;
-  margin-right: -20px;
-  z-index: 2;
-}
-
-/* Efecto al presionar teclas */
-.key:active {
-  background-color: #ccc;
-}
-
-.key.do-sharp:active {
-  background-color: #333;
-}
-
-/* Colores para diferenciar las notas */
 .key.do {
   background-color: #ff8a80;
 }
@@ -69,4 +58,49 @@
 }
 .key.si {
   background-color: #b388ff;
+}
+
+.key.active {
+  transform: scale(1.1) translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+  filter: brightness(0.8);
+  border-width: 3px;
+  font-weight: 900;
+  color: rgba(0, 0, 0, 0.9);
+}
+
+.key:hover:not(.active) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+}
+
+.key:active {
+  transform: scale(1.05) translateY(-3px);
+  filter: brightness(0.85);
+}
+
+@media (max-width: 768px) {
+  .keyboard {
+    padding: 0.15rem 0.3rem;
+  }
+
+  .key {
+    width: 4rem;
+    gap: 6px;
+  }
+}
+
+@media (max-width: 576px) {
+  .keyboard {
+    padding: 0.2rem 0rem;
+  }
+
+  .key {
+    font-size: 1.2rem;
+    width: 2.5rem;
+  }
+
+  .keyboard ul {
+    gap: 2px;
+  }
 }

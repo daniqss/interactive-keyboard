@@ -19,7 +19,7 @@ html {
   width: 100%;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 20px 5%;
+  padding: 0.4rem 5% 3rem 5%;
   box-sizing: border-box;
   height: 100%;
   max-height: 80vh;
