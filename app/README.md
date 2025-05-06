@@ -3,7 +3,7 @@ multiplataform client for interactive keyboard
 
 # development setup
 ## prerequisites
-install rust, bun and tauri requirements
+install rust, node and tauri requirements
 
 ```bash
 sudo pacman -Syu
@@ -18,11 +18,7 @@ sudo pacman -S --needed \
   libappindicator-gtk3 \
   librsvg
 
-# with chaotic aur
-sudo pacman -S --needed bun
-# or with
-curl -fsSL https://bun.sh/install | bash
-
+sudo pacman -S --needed nodejs npm 
 sudo pacman -S --needed rust
 ```
 
