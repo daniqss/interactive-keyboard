@@ -1,8 +1,8 @@
-FROM oven/bun:1.2.8-alpine as builder
+FROM node:lts-alpine3.21 as builder
 
 WORKDIR /app
 COPY package.json ./
-COPY bun.lock ./
+COPY package-lock.json ./
 COPY tsconfig.json ./
 COPY tsconfig.node.json ./
 COPY vite.config.ts ./
@@ -14,8 +14,8 @@ COPY src ./src
 COPY src-tauri/assets/audio ./src-tauri/assets/audio
 COPY src-tauri/assets/image ./src-tauri/assets/image
 
-RUN bun install
-RUN VITE_COMPLETE="true" bun run build
+RUN npm install
+RUN VITE_COMPLETE="true" npm run build
 
 FROM nginx:stable-alpine
 COPY --from=builder /app/dist /usr/share/nginx/html
