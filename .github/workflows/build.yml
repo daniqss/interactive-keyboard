@@ -43,6 +43,13 @@ jobs:
         with:
           workspaces: './src-tauri -> target'
 
+      - name: install frontend dependencies (windows)
+        if: matrix.platform == 'windows-latest'
+        run: |
+          cd app
+          rm package-lock.json
+          npm install --force
+
       - name: install frontend dependencies
         run: |
           cd app
