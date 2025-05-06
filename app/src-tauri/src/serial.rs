@@ -74,11 +74,13 @@ pub async fn watch_serial(
 
                     let note_sender = Arc::clone(&note_sender);
                     tauri::async_runtime::spawn(async move {
-                        #[cfg(debug_assertions)]
                         note_sender
                             .send(note)
                             .await
-                            .unwrap_or_else(|e| eprintln!("Failed to send note: {}", e));
+                            .unwrap_or_else(|e| {
+                                #[cfg(debug_assertions)]
+                                eprintln!("Failed to send note: {}", e)
+                        });
                     });
                 }
                 _ => {}
