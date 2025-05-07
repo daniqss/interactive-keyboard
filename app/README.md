@@ -3,9 +3,10 @@ multiplataform client for interactive keyboard
 
 # development setup
 ## prerequisites
-install rust, node and tauri requirements
+install tauri [prerequisites](https://v2.tauri.app/es/start/prerequisites/) for your system
 
 ```bash
+# for archlinux
 sudo pacman -Syu
 sudo pacman -S --needed \
   webkit2gtk-4.1 \
@@ -24,10 +25,10 @@ sudo pacman -S --needed rust
 
 ## how to run 
 ```bash
-bun run tauri
+npm run tauri dev
 ```
 
 # how to build
 ```bash
-bun tauri build
+npm run tauri build
 ```

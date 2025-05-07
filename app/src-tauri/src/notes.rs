@@ -24,6 +24,7 @@ impl std::fmt::Display for Note {
         }
     }
 }
+
 impl Note {
     pub fn new(note: &str) -> Option<Self> {
         match note.to_lowercase().as_str() {
