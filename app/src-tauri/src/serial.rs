@@ -71,9 +71,9 @@ pub async fn watch_serial(
                     println!("received {} bytes: {}", bytes_read, note);
 
                     tauri::async_runtime::spawn(async move {
-                        if let Err(e) = note_sender.send(note).await {
+                        if let Err(_e) = note_sender.send(note).await {
                             #[cfg(debug_assertions)]
-                            eprintln!("Failed to send note: {}", e);
+                            eprintln!("Failed to send note: {}", _e);
                         }
                     });
                 }
