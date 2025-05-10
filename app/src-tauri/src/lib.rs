@@ -55,6 +55,8 @@ pub fn run(port: Option<SerialPortInfo>) -> Result<()> {
                 async move {
                     loop {
                         if let Some(note) = note_receiver.recv().await {
+                            println!("Note received: {}", note);
+
                             let locked_state = state.lock().unwrap();
                             let animal = Arc::clone(&locked_state.animal);
                             let sounds = Arc::clone(&locked_state.sounds);

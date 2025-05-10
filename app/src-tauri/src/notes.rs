@@ -41,6 +41,7 @@ impl Note {
     }
 
     pub fn get_semitone(&self) -> i8 {
+        // from high to low
         match self {
             Note::Do => 0,
             Note::Re => 2,

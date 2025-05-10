@@ -29,6 +29,7 @@
   object-fit: cover;
   transition: transform 0.3s;
   border-radius: 12px;
+  background-color: white;
 }
 
 .animal-name h2 {

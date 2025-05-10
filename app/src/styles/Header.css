@@ -28,7 +28,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #f3f4f6;
+  background-color: rgb(192, 192, 192);
   border: none;
   cursor: pointer;
   transition: all 0.3s ease;

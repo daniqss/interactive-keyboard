@@ -57,34 +57,33 @@ pub async fn watch_serial(
             }
         };
 
+        let note_sender = Arc::clone(&note_sender);
         let mut serial = BufReader::new(serial);
-        #[cfg(debug_assertions)]
-        println!("Serial port opened: {}", port_path);
-
-        loop {
+        let handler = std::thread::spawn(move || loop {
             let mut buf = String::new();
+
             match serial.read_line(&mut buf) {
                 Ok(bytes_read) if bytes_read > 0 => {
                     let note = buf.trim().to_string();
-
-                    #[cfg(debug_assertions)]
-                    println!("Received {} bytes: {:?}", bytes_read, &buf);
-                    #[cfg(debug_assertions)]
-                    println!("Received note: {}", note);
-
                     let note_sender = Arc::clone(&note_sender);
+
+                    #[cfg(debug_assertions)]
+                    println!("received {} bytes: {}", bytes_read, note);
+
                     tauri::async_runtime::spawn(async move {
-                        note_sender
-                            .send(note)
-                            .await
-                            .unwrap_or_else(|e| {
-                                #[cfg(debug_assertions)]
-                                eprintln!("Failed to send note: {}", e)
-                        });
+                        if let Err(e) = note_sender.send(note).await {
+                            #[cfg(debug_assertions)]
+                            eprintln!("Failed to send note: {}", e);
+                        }
                     });
                 }
                 _ => {}
             }
-        }
+        });
+
+        match handler.join() {
+            Ok(_) => println!("Serial port thread exited"),
+            Err(e) => eprintln!("Serial port thread panicked: {:?}", e),
+        };
     }
 }
