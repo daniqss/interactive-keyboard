@@ -1,9 +1,12 @@
 import { invoke } from "@tauri-apps/api/core";
 
-function reconnectPort() {
-  invoke("reconnect_port")
-    .then((message) => console.log(message))
-    .catch((error) => console.error("Error reconnecting port:", error));
+async function reconnectPort(): Promise<string> {
+  return invoke<string>("reconnect_port")
+    .then((message) => message)
+    .catch((error) => {
+      console.error("Error reconnecting port:", error);
+      return "Unable to reconnect port";
+    });
 }
 
 export { reconnectPort };

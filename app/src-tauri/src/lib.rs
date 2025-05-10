@@ -140,11 +140,8 @@ async fn reconnect_port(app_state: State<'_, Arc<Mutex<AppState>>>) -> Result<St
     let state = app_state
         .lock()
         .map_err(|e| Error::Generic(e.to_string()))?;
-    Ok(format!(
-        "{{ port: {} }}",
-        match state.port.as_ref() {
-            Some(port) => format!("{{ name: {}}}", port.port_name),
-            None => "null".to_string(),
-        }
-    ))
+    Ok(match state.port.as_ref() {
+        Some(port) => format!("{}", port.port_name),
+        None => "No port to connect".to_string(),
+    })
 }
