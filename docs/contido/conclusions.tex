@@ -1,10 +1,26 @@
 \chapter{Conclusións}
 \label{cap:conclusiones}
 
-TFG Breve: El capítulo comenzará con un resumen del trabajo realizado, la importancia que tiene el desarrollo para personas con discapacidad y las lecciones aprendidas. Después tendrá dos secciones.
+% TFG Breve: El capítulo comenzará con un resumen del trabajo realizado, la importancia que tiene el desarrollo para personas con discapacidad y las lecciones aprendidas. Después tendrá dos secciones.
+O proxecto realizado finalmente é un teclado interactivo con sons de animais orientado á aprendizaxe inclusiva, como se planificou, usando un ESP32 con MicroPython para o sistema hardware e unha aplicación de escritorio baseada en Tauri e React para a interface de usuario. O obxectivo principal foi crear unha ferramenta accesible, educativa e lúdica, aproveitando tecnoloxías modernas e multiplataforma. Usando esta aplicación os usuarios poden aprender (xogando) o son de diferentes animais mediante a asociación das súas imaxes e os seus sons. Ademais pódense familiarizar co concepto das escalas musicais e as diferentes notas.
+
+Mediante a realización do traballo aprendín a tratar son en Rust, a empregar Tauri para o desenvolvemento multiplataforma e a crear código de Micropython para controlar un microcontrolador ESP32. Tamén me serviu para afianzar os meus coñecementos en desenvolvemento web, aprendendo a estruturar mellor este tipo de proxecto, seguindo principios de desenvolvemento software fundamentais como o principio de responsabilidade única e o baixo acolchamento. Ademais, seguín boas prácticas de desenvolvemento como o Git Branching ou os Conventional Commits \cite{Conventional}.
+
+
 
 \section{Relación con la titulación}
-Debe explicarse la relación con asignaturas de la titulación (en especial con PDI).
+% Debe explicarse la relación con asignaturas de la titulación (en especial con PDI).
+Neste traballo empreguei e desenvolvín un sistema de procesamento dixital de son para acadar os obxectivos expresados, utilizando diferentes propiedades musicais do son. A maiores, utilizouse a linguaxe de programación que usamos nas prácticas da materia (Python), ademais do hardware usado tamén en prácticas.
+
+Este proxecto inclúe o deseño e a implementación dun sistema hardware, a comunicación con este sistema mediante unha aplicación con varios sistemas que comunicar de xeito concorrente.   
+
 
 \section{Líneas futuras}
-Deben indicarse varias ideas.
+% Deben indicarse varias ideas.
+Entre as liñas a seguir para o futuro a máis importante sería despregar a vista como unha páxina web independente que puidese ser empregada sen a necesidade de descargar ningún programa, directamente desde o navegador.
+
+Para isto habería que implementar o procesado de son directamente en Typescript para ser executado directamente no navegador. Despois, a forma máis sinxela de publicar a páxina web sería a través de Github Pages. Este servizo de Github permítenos despregar aplicacións estáticas coma esta de forma moi sinxela sen necesidade de mercar un dominio ou utilizar un servidor. Para automatizar o proceso de despregue podemos usar Github Actions. Outra opción sería atopar un servizo que permita despregar contedores Docker, para utilizar o Dockerfile que xa está implementado.
+
+Ademais, poderíamos implementar un novo botón para cambiar entre diferentes teclados, con diferentes notas. Esto permitiríanos cambiar entre o teclado simplificado actual e o teclado completo con 8 teclas. 
+\newline\newline
+Outra posible liña de mellora e ampliación sería mellorar a eficiencia do sistema. A forma máis sinxela de facelo sería manter en memoria os sons decodificados. Esta mellora poderíase implementar directamente en Typescript na vista web, de forma que realizariamos ás dúas liñas de mellora á vez.

@@ -55,6 +55,7 @@ pub fn run(port: Option<SerialPortInfo>) -> Result<()> {
                 async move {
                     loop {
                         if let Some(note) = note_receiver.recv().await {
+                            #[cfg(debug_assertions)]
                             println!("Note received: {}", note);
 
                             let locked_state = state.lock().unwrap();
