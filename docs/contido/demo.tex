@@ -31,7 +31,7 @@ Tauri permite crear aplicacións multiplataforma sen necesidade de ter empaqueta
   \label{fig:TauriIPC}
 \end{figure}
 
-Para codificar a vista usei a popular librería de UI desenvolta por Meta, React \cite{React}. Esta opción moi usada tanto a nivel nacional como internacional permítenos desenvolver aplicacións reactivas de xeito sinxelo e moi cómodo para o programador.
+Para codificar a vista usei a popular librería de UI desenvolta por Meta, React \cite{React}. Esta opción moi usada tanto a nivel nacional como internacional permítenos desenvolver aplicacións reactivas de xeito sinxelo e moi cómodo para o programador. Ademais, utilicei a linguaxe Typescript, que transpila a Javascript, para ter unha mellor experiencia de desenvolvemento e acadar un produto máis facilmente mantible ao longo do tempo.
 
 Para a manipulación do son utilízase a librería de manipulación de son Rodio \cite{Rodio}, que nos permite reproducir son de forma multiplataforma.
 
@@ -45,51 +45,98 @@ Para o control do porto serie para a comunicación co sistema hardware utilízas
 
 % En caso de incluir figuras, deben referenciarse de esta forma "la figura~\ref{fig:exemplo} ". Todas las figuras deben estar referenciadas en el texto.
 % Se recomienda poner todas las figuras en el directorio \texttt{imaxes}.
+O primeiro prototipo do proxecto consistiu en facer unha aplicación na que se puidese reproducir o son dun elefante cando ao pulsar as teclas do teclado do ordenador. Esta primeira aproximación permitiu primeiro desenvolver o sistema de procesado de son antes que o resto do proxecto. Ademais disto, permitiume familiarizarme con Tauri e o seu paso de mensaxes entre o proceso que executa a vista web e o proceso que executa o núcleo en Rust. Como vemos nas figuras \ref{fig:playNote} e \ref{fig:invokePlayNote} para dende a vista web podemos invocar comandos que se executarán no núcleo da aplicación. 
 
 \begin{figure}[hp!]
   \centering
-  \includegraphics[width=0.75\textwidth]{imaxes/udc.png}
-  \caption{Título de la figura}
-  \label{fig:exemplo}
+  \includegraphics[width=0.75\textwidth]{imaxes/playNote.png}
+  \caption{Código correspondente á reprodución de son no navegador}
+  \label{fig:playNote}
 \end{figure}
 
 \begin{figure}[hp!]
   \centering
-  \begin{subfigure}[c]{0.3\textwidth}
-    \includegraphics[angle=45,width=\textwidth]{imaxes/udc.png}
-    \caption{Título figura 1}
-    \label{fig:subfigura-rotada}
-  \end{subfigure}
-  \hspace{0.1\textwidth}
-  \begin{subfigure}[c]{0.3\textwidth}
-    \includegraphics[width=\textwidth,height=3cm]{imaxes/udc.png}
-    \caption{Título figura 2}
-    \label{fig:subfigura-deformada}
-  \end{subfigure}
-  \caption{Título general de la figura}
-  \label{fig:exemplo-subfiguras}
+  \includegraphics[width=0.75\textwidth]{imaxes/invokePlayNote.png}
+  \caption{Código correspondente á invocación dun comando de Tauri}
+  \label{fig:invokePlayNote}
+\end{figure}
+
+O sistema de procesado de son atópase no núcleo da aplicación. Tomei decisión de deseño en vez de usar a API do navegador para reproducir son porque desta forma sería máis fácil integrar o sistema á hora de reproducir son demandado polo sistema hardware. Da outra maneira habería que comunicar os mensaxes do sistema hardware ca vista web, complicando a arquitectura. A outra posible desvantaxe sería unha maior dificultade de modificar este son usando as API do navegador.
+
+Un dos primeiros obstáculos que se atoparon foi a natureza bloqueante da reprodución de son. Para solucionar isto, a solución foi executar a reprodución noutro fío secundario, que podemos utilizar de forma moi sinxela grazas ás funcións asíncronas de Rust, como vemos na figura \ref{fig:playNoteCommand}. Tauri utiliza Tokio, un runtime asíncrono de Rust que implementa "fíos verdes", permitindo executar bloques asíncronos con gran facilidade. Estes fíos verdes\cite{GreenThread} consisten en executar en fíos xestionados por un runtime (neste caso Tokio) ou unha máquina virtual. En vez de crear un fío do sistema operativo para cada operación, o sistema ten unha piscina de fíos que administra dun xeito similar ao bucle de eventos de Javascript.
+
+\begin{figure}[hp!]
+  \centering
+  \includegraphics[width=0.75\textwidth]{imaxes/playNoteCommand.png}
+  \caption{Código correspondente á execución do son, dende un fío secundario}
+  \label{fig:playNoteCommand}
+\end{figure}
+
+Para o procesamento do son para soar como unha nota musical, tomando como base o son dun animal gardado nunha pista de son wav o que facemos e aplicarlle unha aceleración ao son seleccionado. Dependendo da nota desexada acelérase máis. Canto máis aguda sexa a nota máis debemos acelerar. Esto faise seguindo o sistema do temperamento igual de 12 tons \cite{Semitone}. Cada semitón representa un incremento de frecuencia equivalente á raíz doceava de 2, polo que cada semitón representa un incremento de frecuencia (acelerando) equivalente á raíz doceava de 2, polo que para modificar a altura dun son orixinal sen alterar o seu timbre nin a súa duración relativa, multiplícase a súa frecuencia polo factor 
+\[
+f = f_0 \cdot 2^{\frac{n}{12}}
+\]
+onde n é o número de semitóns de diferenza respecto á nota base.
+
+\begin{figure}[hp!]
+  \centering
+  \includegraphics[width=0.75\textwidth]{imaxes/semitone.png}
+  \caption{Código correspondente á execución do son}
+  \label{fig:semitone}
+\end{figure}
+
+O seguinte problema que se presentou foi que os arquivos soamente se podían reproducir executando a aplicación en modo desenvolvemento. Para facer que Tauri inclúa na aplicación final os arquivos, debemos facer referencia a eles, en vez a través das rutas relativas ao proxecto, a través do resolvente de camiños de Tauri, como se amosa na figura \ref{fig:resolvePath}. Desta forma, os sons son incluídos na versión final da aplicación.
+
+\begin{figure}[hp!]
+  \centering
+  \includegraphics[width=0.75\textwidth]{imaxes/resolvePath.png}
+  \caption{Código amosando a resolución de camiños}
+  \label{fig:resolvePath}
+\end{figure}
+
+Unha vez que a reprodución e procesamento de son funcionaron de forma correcta no ordenador comecei a traballar na implementación do teclado baseado nun microcontrolador, co deseño que vemos na figura \ref{fig:microcontrolador}. O sistema inicial soamente incluía un só botón pero o seu funcionamento é o mesmo, usando os pins 26 para a nota re, o 25 para a nota sol e o 33 para a nota si. Como vemos na figura \ref{fig:micropython}, o código consiste en enviar a través do porto serie o nome da nota correspondente á tecla premida.
+
+\begin{figure}[hp!]
+  \centering
+  \includegraphics[width=0.75\textwidth]{imaxes/microcontrolador.jpeg}
+  \caption{Deseño do sistema hardware}
+  \label{fig:microcontrolador}
+\end{figure}
+
+\begin{figure}[hp!]
+  \centering
+  \includegraphics[width=0.75\textwidth]{imaxes/micropython.png}
+  \caption{Código de Micropython do teclado}
+  \label{fig:micropython}
+\end{figure}
+
+O seguinte paso foi a lectura do porto serie dende a aplicación para a reprodución da nota usando a librería \cite{Serialport}. Para implementar a lectura usouse un fío específico que lee de forma continua o porto serie se hai algún dispoñible. Cando se realiza unha lectura no porto, envíase a través dun canal ao fío principal para poder reproducir o son, como vemos na figura \ref{fig:sender}.  
+
+\begin{figure}[hp!]
+  \centering
+  \includegraphics[width=0.75\textwidth]{imaxes/sender.png}
+  \caption{Lectura e envío das notas do porto serie}
+  \label{fig:sender}
+\end{figure}
+
+Unha vez que todos os sistemas se integraron de forma correcta o seguinte a cumprir foi a mellora do primeiro prototipo da vista. Nesta mellora engadíronse imaxes destinadas a un fácil entendemento do público do traballo, empezouse a usar unha fonte tamén axeitada para unha lectura sinxela, como é Verdana, e revisouse o seguimento das normas e os estándares de accesibilidade da web relativos ao contraste das cores para unha correcta comprensión, acadando o resultado que podemos ver na figura \ref{fig:app}
+
+\begin{figure}[hp!]
+  \centering
+  \includegraphics[width=0.75\textwidth]{imaxes/app.png}
+  \caption{Deseño final da vista}
+  \label{fig:app}
+\end{figure}
+
+Unha vez rematado o desenvolvemento propiamente dito, procedeuse cunha fase de probas. Dada a natureza en tempo real da aplicación o máis sinxelo foi realizar unha proba manual comprobando o correcto funcionamento de todos os casos de uso da aplicación en todas as plataformas soportadas(Linux e Windows). Para obter de forma sinxela binarios da aplicación para a súa proba nun contexto real creouse unha tarefa de Github Action que permite crear os binarios de produción para varias plataformas sen necesidade de compilación cruzada, como vemos na figura \ref{fig:cd}. Despois, os instaladores producidos publícanse como lanzamentos en Github, permitindo que os usuarios sen coñecementos técnicos instalen a aplicación sen necesidade de instalar as dependencias de desenvolvemento de Tauri.
+
+\begin{figure}[hp!]
+  \centering
+  \includegraphics[width=0.75\textwidth]{imaxes/cd.png}
+  \caption{Traballos en Github Actions}
+  \label{fig:cd}
 \end{figure}
 
 % Se puede añadir partes del código que sean importantes para entender el desarrollo.
 
 % Se pueden incluir cuadros (tablas). Los cuadros tienen que estar referenciados en el texto (por ejemplo, el cuadro \ref{tab:exemplo}).
-
-\begin{table}[hp!]
-  \centering
-  \rowcolors{2}{white}{udcgray!25}
-  \begin{tabular}{c|c}
-  \rowcolor{udcpink!25}
-  \textbf{Título de columna} & \textbf{Outro título de columna} \\\hline
-  \textit{Título de fila} & Contido de celda \\
-  \textit{Título de fila} & Contido de celda \\
-  \textit{Título de fila} & Contido de celda \\
-  \textit{Título de fila} & Contido de celda \\
-  \textit{Título de fila} & Contido de celda \\
-  \textit{Título de fila} & Contido de celda \\
-  \end{tabular}
-  \caption{Título del cuadro}
-  \label{tab:exemplo}
-\end{table}
-
-
-
