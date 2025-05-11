@@ -40,7 +40,7 @@ impl Note {
         }
     }
 
-    pub fn get_semitone(&self) -> f32 {
+    pub fn get_semitone(&self) -> i8 {
         // from high to low
         match self {
             Note::Do => 0,
@@ -52,23 +52,5 @@ impl Note {
             Note::Si => 11,
             Note::DoSharp => 12,
         }
-    }
-
-    pub fn sound(
-        &self,
-        sounds: &AnimalSounds,
-        note: &Note,
-    ) -> Result<Speed<Decoder<BufReader<File>>>> {
-        let semitone = note.get_semitone();
-        let reproduce_semitone = |s| 2.0f32.powf(s / 12.0);
-
-        let decoder = match self {
-            Animal::Elephant => AnimalSounds::load_decoder(&sounds.elephant_path)?,
-            Animal::Tiger => AnimalSounds::load_decoder(&sounds.tiger_path)?,
-            Animal::Dog => AnimalSounds::load_decoder(&sounds.dog_path)?,
-            Animal::Dolphin => AnimalSounds::load_decoder(&sounds.dolphin_path)?,
-        };
-
-        Ok(decoder.speed(reproduce_semitone(semitone)))
     }
 }
