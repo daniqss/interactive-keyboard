@@ -25,9 +25,7 @@ jobs:
           npm run build
 
       - name: deploy to github pages
-        run: |
-          cd app
-          git config --global user.email "danielqueijo14@gmail.com"
-          git config --global user.name "daniqss"
-
-          npx gh-pages -d dist -r "https://x-access-token:${{ secrets.GH_PAGES_TOKEN }}@github.com/${{ github.repository }}"
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./app/dist
