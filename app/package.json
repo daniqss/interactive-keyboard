@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "deploy": "gh-pages -d dist -r https://$GITHUB_TOKEN@github.com/daniqss/interactive-keyboard.git",
+    "deploy": "npm run build && gh-pages -d dist",
     "preview": "vite preview",
     "tauri": "tauri"
   },
