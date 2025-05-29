@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - mamama
+      - main
 
 jobs:
   publish-tauri:
