@@ -28,6 +28,8 @@ jobs:
       - name: deploy to github pages
         run: | 
             cd app
+            git config --global user.email "danielqueijo14@gmail.com"
+            git config --global user.name "daniqss"
             npm run deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
