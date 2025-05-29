@@ -19,6 +19,10 @@ export const CONFIG = {
   completeKeyboard,
   isTauri: isTauri(),
   isDev,
-  audioPath: isDev ? "../../src-tauri/assets/audio" : "/assets",
-  imagePath: isDev ? "../../src-tauri/assets/image" : "/assets",
+  audioPath: isDev
+    ? "../../src-tauri/assets/audio"
+    : "/interactive-keyboard/assets",
+  imagePath: isDev
+    ? "../../src-tauri/assets/image"
+    : "/interactive-keyboard/assets",
 };

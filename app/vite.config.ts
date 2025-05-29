@@ -8,7 +8,7 @@ const base = "/interactive-keyboard/";
 // https://vitejs.dev/config/
 export default defineConfig(async () => ({
   plugins: [react()],
-  base,
+  base: "/interactive-keyboard/",
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   //
   // 1. prevent vite from obscuring rust errors
@@ -33,7 +33,7 @@ export default defineConfig(async () => ({
   build: {
     rollupOptions: {
       output: {
-        assetFileNames: `interactive-keyboard/assets/[name].[ext]`,
+        assetFileNames: `assets/[name].[ext]`,
       },
     },
   },
