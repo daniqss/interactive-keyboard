@@ -33,7 +33,7 @@ export default defineConfig(async () => ({
   build: {
     rollupOptions: {
       output: {
-        assetFileNames: `${base}/assets/[name].[ext]`,
+        assetFileNames: `interactive-keyboard/assets/[name].[ext]`,
       },
     },
   },
