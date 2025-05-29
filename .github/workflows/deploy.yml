@@ -29,6 +29,5 @@ jobs:
           cd app
           git config --global user.email "danielqueijo14@gmail.com"
           git config --global user.name "daniqss"
-          npx gh-pages -d dist -r "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+          npx gh-pages -d dist -r "https://x-access-token:${{ secrets.GH_PAGES_TOKEN }}@github.com/${{ github.repository }}"
