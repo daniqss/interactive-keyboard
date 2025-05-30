@@ -18,16 +18,18 @@ const isTauri = isTauriFn();
 export const CONFIG = {
   isTauri,
   isDev,
-  // with GH_PAGES works fine too but I was using GH_PAGES as bool and not as string (GH_PAGES === "true")
   audioPath: isDev
     ? "../../src-tauri/assets/audio"
-    : GH_PAGES === "true"
+    : GH_PAGES
     ? "/interactive-keyboard/assets"
+    : isTauri
+    ? "/assets"
     : "/assets",
-
   imagePath: isDev
     ? "../../src-tauri/assets/image"
-    : GH_PAGES === "true"
+    : GH_PAGES
     ? "/interactive-keyboard/assets"
+    : isTauri
+    ? "/assets"
     : "/assets",
 };
