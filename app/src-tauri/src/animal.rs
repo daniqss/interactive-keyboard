@@ -58,7 +58,11 @@ impl Animal {
             Animal::Dolphin => AnimalSounds::load_decoder(&sounds.dolphin_path)?,
         };
 
-        Ok(decoder.speed(reproduce_semitone(semitone)))
+        let speed = reproduce_semitone(semitone);
+        #[cfg(debug_assertions)]
+        println!("{}", speed);
+
+        Ok(decoder.speed(speed))
     }
 }
 
