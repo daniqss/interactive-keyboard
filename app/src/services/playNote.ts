@@ -45,7 +45,7 @@ const semitones: Record<string, number> = {
 
 function getSemitone(note: string): number {
   const semitone = semitones[note];
-  return Math.pow(2, (semitone === undefined ? semitone : 1) / 12);
+  return Math.pow(2, (semitone === undefined ? 1 : semitone) / 12);
 }
 
 export { playNote };

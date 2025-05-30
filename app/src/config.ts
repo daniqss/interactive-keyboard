@@ -1,4 +1,4 @@
-import { isTauri } from "@tauri-apps/api/core";
+import { isTauri as isTauriFn } from "@tauri-apps/api/core";
 
 import.meta.glob("../src-tauri/assets/audio/*", {
   eager: true,
@@ -11,20 +11,22 @@ import.meta.glob("../src-tauri/assets/image/*", {
   import: "default",
 });
 
-const { GH_PAGES, MODE } = import.meta.env;
+const { MODE } = import.meta.env;
 const isDev = MODE === "development";
+const isTauri = isTauriFn();
 
 export const CONFIG = {
-  isTauri: isTauri(),
+  isTauri,
   isDev,
+  // with GH_PAGES works fine too but I was using GH_PAGES as bool and not as string (GH_PAGES === "true")
   audioPath: isDev
     ? "../../src-tauri/assets/audio"
-    : GH_PAGES
-    ? "/interactive-keyboard/assets"
-    : "/assets",
+    : isTauri
+    ? "/assets"
+    : "/interactive-keyboard/assets",
   imagePath: isDev
     ? "../../src-tauri/assets/image"
-    : GH_PAGES
-    ? "/interactive-keyboard/assets"
-    : "/assets",
+    : isTauri
+    ? "/assets"
+    : "/interactive-keyboard/assets",
 };
