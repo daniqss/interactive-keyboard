@@ -20,16 +20,8 @@ export const CONFIG = {
   isDev,
   audioPath: isDev
     ? "../../src-tauri/assets/audio"
-    : GH_PAGES
-    ? "/interactive-keyboard/assets"
-    : isTauri
-    ? "/assets"
-    : "/assets",
+    : "/interactive-keyboard/assets",
   imagePath: isDev
     ? "../../src-tauri/assets/image"
-    : GH_PAGES
-    ? "/interactive-keyboard/assets"
-    : isTauri
-    ? "/assets"
-    : "/assets",
+    : "/interactive-keyboard/assets",
 };
