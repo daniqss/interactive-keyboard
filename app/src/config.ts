@@ -11,18 +11,20 @@ import.meta.glob("../src-tauri/assets/image/*", {
   import: "default",
 });
 
-const { VITE_COMPLETE, MODE } = import.meta.env;
+const { GH_PAGES, MODE } = import.meta.env;
 const isDev = MODE === "development";
-const completeKeyboard = VITE_COMPLETE === "true";
 
 export const CONFIG = {
-  completeKeyboard,
   isTauri: isTauri(),
   isDev,
   audioPath: isDev
     ? "../../src-tauri/assets/audio"
-    : "/interactive-keyboard/assets",
+    : GH_PAGES
+    ? "/interactive-keyboard/assets"
+    : "/assets",
   imagePath: isDev
     ? "../../src-tauri/assets/image"
-    : "/interactive-keyboard/assets",
+    : GH_PAGES
+    ? "/interactive-keyboard/assets"
+    : "/assets",
 };
