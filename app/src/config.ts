@@ -11,7 +11,7 @@ import.meta.glob("../src-tauri/assets/image/*", {
   import: "default",
 });
 
-const { MODE } = import.meta.env;
+const { GH_PAGES, MODE } = import.meta.env;
 const isDev = MODE === "development";
 const isTauri = isTauriFn();
 
@@ -21,12 +21,13 @@ export const CONFIG = {
   // with GH_PAGES works fine too but I was using GH_PAGES as bool and not as string (GH_PAGES === "true")
   audioPath: isDev
     ? "../../src-tauri/assets/audio"
-    : isTauri
-    ? "/assets"
-    : "/interactive-keyboard/assets",
+    : GH_PAGES === "true"
+    ? "/interactive-keyboard/assets"
+    : "/assets",
+
   imagePath: isDev
     ? "../../src-tauri/assets/image"
-    : isTauri
-    ? "/assets"
-    : "/interactive-keyboard/assets",
+    : GH_PAGES === "true"
+    ? "/interactive-keyboard/assets"
+    : "/assets",
 };
