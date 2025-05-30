@@ -5,9 +5,10 @@ import react from "@vitejs/plugin-react";
 const host = process.env.TAURI_DEV_HOST;
 
 // https://vitejs.dev/config/
-export default defineConfig(async () => ({
+export default defineConfig(async ({}) => ({
   plugins: [react()],
-  // base: "/interactive-keyboard/",
+  // @ts-expect-error
+  base: process.env.GH_PAGES === "true" ? "/interactive-keyboard/" : "/",
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   //
   // 1. prevent vite from obscuring rust errors

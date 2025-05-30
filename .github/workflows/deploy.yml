@@ -23,6 +23,8 @@ jobs:
           cd app
           npm install
           npm run build
+        env:
+          GH_PAGES: true
 
       - name: deploy to github pages
         uses: peaceiris/actions-gh-pages@v3
