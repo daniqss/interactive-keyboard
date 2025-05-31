@@ -15,13 +15,20 @@ const { MODE } = import.meta.env;
 const isDev = MODE === "development";
 const isTauri = isTauriFn();
 
+const ghPagesAssetsPath = "/interactive-keyboard/assets";
+const tauriAssetsPath = "/assets";
+
 export const CONFIG = {
   isTauri,
   isDev,
   audioPath: isDev
     ? "../../src-tauri/assets/audio"
-    : "/interactive-keyboard/assets",
+    : isTauri === true
+    ? tauriAssetsPath
+    : ghPagesAssetsPath,
   imagePath: isDev
     ? "../../src-tauri/assets/image"
-    : "/interactive-keyboard/assets",
+    : isTauri === true
+    ? tauriAssetsPath
+    : ghPagesAssetsPath,
 };
