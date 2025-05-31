@@ -11,7 +11,7 @@ import.meta.glob("../src-tauri/assets/image/*", {
   import: "default",
 });
 
-const { GH_PAGES, MODE } = import.meta.env;
+const { MODE } = import.meta.env;
 const isDev = MODE === "development";
 const isTauri = isTauriFn();
 
