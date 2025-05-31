@@ -2,7 +2,7 @@
   "name": "interactive-keyboard",
   "homepage": "https://daniqss.github.io/interactive-keyboard",
   "private": true,
-  "version": "0.1.2",
+  "version": "0.2.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
